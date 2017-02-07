@@ -1,0 +1,6 @@
+framework module Pods_DeliveryMate {
+  umbrella header "Pods-DeliveryMate-umbrella.h"
+
+  export *
+  module * { export * }
+}
