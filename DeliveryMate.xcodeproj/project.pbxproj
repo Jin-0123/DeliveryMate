@@ -12,6 +12,12 @@
 		437A79AE1E4991F100A80B89 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 437A79AC1E4991F100A80B89 /* Main.storyboard */; };
 		437A79B01E4991F100A80B89 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 437A79AF1E4991F100A80B89 /* Assets.xcassets */; };
 		437A79B31E4991F100A80B89 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 437A79B11E4991F100A80B89 /* LaunchScreen.storyboard */; };
+		437A79BB1E49926C00A80B89 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 437A79BA1E49926C00A80B89 /* GoogleService-Info.plist */; };
+		437A79BD1E49934800A80B89 /* SignViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437A79BC1E49934800A80B89 /* SignViewController.swift */; };
+		437A79C21E49939F00A80B89 /* temp.m in Sources */ = {isa = PBXBuildFile; fileRef = 437A79C11E49939F00A80B89 /* temp.m */; };
+		437A79C41E49944000A80B89 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437A79C31E49944000A80B89 /* MapViewController.swift */; };
+		437A79C61E49952900A80B89 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437A79C51E49952900A80B89 /* UserInfo.swift */; };
+		BDF23338243BFA104887B1FE /* Pods_DeliveryMate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C382A0A04E536B31A66EC848 /* Pods_DeliveryMate.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +28,15 @@
 		437A79AF1E4991F100A80B89 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		437A79B21E4991F100A80B89 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		437A79B41E4991F100A80B89 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		437A79BA1E49926C00A80B89 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		437A79BC1E49934800A80B89 /* SignViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignViewController.swift; sourceTree = "<group>"; };
+		437A79C01E49939F00A80B89 /* DeliveryMate-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DeliveryMate-Bridging-Header.h"; sourceTree = "<group>"; };
+		437A79C11E49939F00A80B89 /* temp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = temp.m; sourceTree = "<group>"; };
+		437A79C31E49944000A80B89 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		437A79C51E49952900A80B89 /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
+		547C3EC263B60EC13B02C4F8 /* Pods-DeliveryMate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeliveryMate.release.xcconfig"; path = "Pods/Target Support Files/Pods-DeliveryMate/Pods-DeliveryMate.release.xcconfig"; sourceTree = "<group>"; };
+		722B6B8EDE766CA5C1AEEC30 /* Pods-DeliveryMate.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeliveryMate.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DeliveryMate/Pods-DeliveryMate.debug.xcconfig"; sourceTree = "<group>"; };
+		C382A0A04E536B31A66EC848 /* Pods_DeliveryMate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DeliveryMate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BDF23338243BFA104887B1FE /* Pods_DeliveryMate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -40,6 +56,8 @@
 			children = (
 				437A79A71E4991F100A80B89 /* DeliveryMate */,
 				437A79A61E4991F100A80B89 /* Products */,
+				708AD2859EF5C31D9A532F55 /* Pods */,
+				6DC0115E4C43B1B006684322 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -56,12 +74,35 @@
 			children = (
 				437A79A81E4991F100A80B89 /* AppDelegate.swift */,
 				437A79AA1E4991F100A80B89 /* ViewController.swift */,
+				437A79BC1E49934800A80B89 /* SignViewController.swift */,
+				437A79C31E49944000A80B89 /* MapViewController.swift */,
+				437A79C51E49952900A80B89 /* UserInfo.swift */,
 				437A79AC1E4991F100A80B89 /* Main.storyboard */,
 				437A79AF1E4991F100A80B89 /* Assets.xcassets */,
 				437A79B11E4991F100A80B89 /* LaunchScreen.storyboard */,
+				437A79BA1E49926C00A80B89 /* GoogleService-Info.plist */,
 				437A79B41E4991F100A80B89 /* Info.plist */,
+				437A79C01E49939F00A80B89 /* DeliveryMate-Bridging-Header.h */,
+				437A79C11E49939F00A80B89 /* temp.m */,
 			);
 			path = DeliveryMate;
+			sourceTree = "<group>";
+		};
+		6DC0115E4C43B1B006684322 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C382A0A04E536B31A66EC848 /* Pods_DeliveryMate.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		708AD2859EF5C31D9A532F55 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				722B6B8EDE766CA5C1AEEC30 /* Pods-DeliveryMate.debug.xcconfig */,
+				547C3EC263B60EC13B02C4F8 /* Pods-DeliveryMate.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -71,9 +112,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 437A79B71E4991F100A80B89 /* Build configuration list for PBXNativeTarget "DeliveryMate" */;
 			buildPhases = (
+				E6805BADDFD0FC6F8DB49C5D /* [CP] Check Pods Manifest.lock */,
 				437A79A11E4991F000A80B89 /* Sources */,
 				437A79A21E4991F000A80B89 /* Frameworks */,
 				437A79A31E4991F000A80B89 /* Resources */,
+				43D9D749954D66FDB3894EE5 /* [CP] Embed Pods Frameworks */,
+				9B145F609BFB6D9DC7B0D370 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -97,6 +141,7 @@
 					437A79A41E4991F000A80B89 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = RPXQPWQ755;
+						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -125,6 +170,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				437A79B31E4991F100A80B89 /* LaunchScreen.storyboard in Resources */,
+				437A79BB1E49926C00A80B89 /* GoogleService-Info.plist in Resources */,
 				437A79B01E4991F100A80B89 /* Assets.xcassets in Resources */,
 				437A79AE1E4991F100A80B89 /* Main.storyboard in Resources */,
 			);
@@ -132,13 +178,65 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		43D9D749954D66FDB3894EE5 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DeliveryMate/Pods-DeliveryMate-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9B145F609BFB6D9DC7B0D370 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DeliveryMate/Pods-DeliveryMate-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E6805BADDFD0FC6F8DB49C5D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		437A79A11E4991F000A80B89 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				437A79AB1E4991F100A80B89 /* ViewController.swift in Sources */,
+				437A79BD1E49934800A80B89 /* SignViewController.swift in Sources */,
 				437A79A91E4991F100A80B89 /* AppDelegate.swift in Sources */,
+				437A79C41E49944000A80B89 /* MapViewController.swift in Sources */,
+				437A79C61E49952900A80B89 /* UserInfo.swift in Sources */,
+				437A79C21E49939F00A80B89 /* temp.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,26 +357,33 @@
 		};
 		437A79B81E4991F100A80B89 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 722B6B8EDE766CA5C1AEEC30 /* Pods-DeliveryMate.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = RPXQPWQ755;
 				INFOPLIST_FILE = DeliveryMate/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jinyoung.DeliveryMate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "DeliveryMate/DeliveryMate-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
 		437A79B91E4991F100A80B89 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 547C3EC263B60EC13B02C4F8 /* Pods-DeliveryMate.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = RPXQPWQ755;
 				INFOPLIST_FILE = DeliveryMate/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jinyoung.DeliveryMate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "DeliveryMate/DeliveryMate-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -302,6 +407,7 @@
 				437A79B91E4991F100A80B89 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

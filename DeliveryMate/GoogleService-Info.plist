@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>177984296623-d9k20aqp30409jht9tmsc68ktjo9rk71.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.177984296623-d9k20aqp30409jht9tmsc68ktjo9rk71</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBeVZrd7IIyVe8UPb_6GL_mPC6eH0HP4_M</string>
+	<key>GCM_SENDER_ID</key>
+	<string>177984296623</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.jinyoung.DeliveryMate</string>
+	<key>PROJECT_ID</key>
+	<string>deliverymate-2644f</string>
+	<key>STORAGE_BUCKET</key>
+	<string>deliverymate-2644f.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:177984296623:ios:3c4cf013d1a37987</string>
+	<key>DATABASE_URL</key>
+	<string>https://deliverymate-2644f.firebaseio.com</string>
+</dict>
+</plist>
