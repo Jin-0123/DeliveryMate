@@ -11,6 +11,7 @@ import UIKit
 class MapTableCell : UITableViewCell {
     @IBOutlet weak var newAddressLabel: UILabel!
     @IBOutlet weak var locationTitleLabel: UILabel!
+    @IBOutlet weak var pinImageView: UIImageView!
 }
 
     

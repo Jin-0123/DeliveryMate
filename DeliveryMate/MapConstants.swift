@@ -26,8 +26,6 @@ struct MapConstants {
     
     struct MapResponseKeys {
             static let Channel = "channel"
-            static let TotalCount = "totalCount"
-            static let Info = "info"
             static let Item = "item"
             static let Title = "title"
             static let Latitude = "latitude"

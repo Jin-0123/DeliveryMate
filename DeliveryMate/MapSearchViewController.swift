@@ -21,7 +21,7 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
     
     var tableItem = [(String, String, String, String, String)]()
     
-    enum mapSearchInState { case willSearch, searching, searched }
+    enum mapSearchInState { case prepare, searching, searched }
     var tableOriginHeight: CGFloat = 0
     var searchResultbuttonOriginY: CGFloat = 0
     
@@ -40,20 +40,19 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
         
         // 3. daum 지도를 뷰에 그린다.
         self.view.addSubview(mapView)
-        
-        // 4. 현재 위치를 나타내지 않는다.
-        mapView.showCurrentLocationMarker = false
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
+        // 1. 검색에 따라 뷰 조절을 위해 테이블의 기존 높이와 검색결과 버튼의 기존 y값을 저장한다.
         self.tableOriginHeight = self.mapTableView.frame.height
         self.searchResultbuttonOriginY = self.searchResultButton.frame.minY
-        self.searchResultButton.layer.borderWidth = 1
-        self.searchResultButton.layer.borderColor = UIColor.lightGray.cgColor
+        
+        // 2. 기본적인 뷰의 UI를 설정한다.
+        self.mapSearchConfigureUI(.prepare)
     }
     
-    
-    
+
     // daumMapURLFromParameters : 장소검색 요청에 필요한 parameter를 만든다.
     private func daumMapURLFromParameters(_ parameters: [String: AnyObject]) -> URL {
         var components = URLComponents()
@@ -73,6 +72,10 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
     // MARK: - searchBar
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        // 1. 현재 위치 트레킹을 중지한다.
+        self.mapView.currentLocationTrackingMode = .off
+        self.mapView.showCurrentLocationMarker = false
+
         self.tableItem = []
         
         if let keyword = self.mapSearchBar.text {
@@ -132,19 +135,6 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
                 }
                 
                 
-                guard let info = channel[MapConstants.MapResponseKeys.Info] as? [String:AnyObject] else {
-                    displayError("Cannot find keys '\(MapConstants.MapResponseKeys.Info)' in \(channel)")
-                    return
-                }
-                
-                
-                guard let totalCount = info[MapConstants.MapResponseKeys.TotalCount] as? String else {
-                    displayError("Cannot find keys 'totalCount' in \(info)")
-                    return
-                }
-                
-                
-                
                 guard let items = channel[MapConstants.MapResponseKeys.Item] as? [[String:AnyObject]] else {
                     displayError("Cannot find keys '\(MapConstants.MapResponseKeys.Item)' in \(channel)")
                     return
@@ -180,9 +170,16 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
                 }
                 
                 performUIUpdatesOnMain {
-                    self.searchResultButton.setTitle("검색결과 \(totalCount)건", for: .normal)
+                    // 1. 테이블데이터를 reload 한다.
                     self.mapTableView.reloadData()
+                    
+                    // 2. 검색상태로 뷰 UI를 변경한다.
                     self.mapSearchConfigureUI(.searching)
+                    
+                    // 3. 첫번째 셀을 선택한다.
+                    self.mapTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: UITableViewScrollPosition.top)
+                    self.tableView(self.mapTableView, didSelectRowAt: IndexPath(row: 0, section: 0))
+                    
                 }
             }
             
@@ -203,6 +200,17 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
         self.mapSearchConfigureUI(.searched)
     }
     
+    func pinItem(latitude: Double, longitude: Double) -> MTMapPOIItem {
+        let item = MTMapPOIItem()
+        item.itemName = "이 위치로 선택하기"
+        item.markerType = .redPin
+        item.markerSelectedType = .redPin
+        item.mapPoint = MTMapPoint(geoCoord: .init(latitude: latitude, longitude: longitude))
+        item.showAnimationType = .noAnimation
+        item.customImageAnchorPointOffset = .init(offsetX: 30, offsetY: 0)
+        return item
+    }
+    
     
     // MARK: - Table view data source
     
@@ -212,6 +220,7 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "mapTableCell", for: indexPath) as! MapTableCell
+        cell.pinImageView.isHidden = true
         cell.locationTitleLabel.text = tableItem[indexPath.row].0
         
         // 1. 신주소가 없을 경우, 구주소로 텍스트를 넣어준다.
@@ -224,6 +233,34 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        // 1. 선택된 행에 핀 이미지를 보여준다.
+        let cell = tableView.cellForRow(at: indexPath) as! MapTableCell
+        cell.pinImageView.isHidden = false
+        
+        // 2. 지도 위에 기존에 찍힌 핀을 없앤다.
+        mapView.removeAllPOIItems()
+        
+        // 3. 선택한 행의 정보로 핀을 초기화한다.
+        let pin : MTMapPOIItem = pinItem(latitude: Double(tableItem[indexPath.row].3)!, longitude: Double(tableItem[indexPath.row].4)!)
+        
+        // 4. 핀을 추가한 후, 지도 위에 핀을 보여준다.
+        mapView.add(pin)
+        mapView.fitAreaToShowAllPOIItems()
+        
+        // 5. 핀을 선택한 상태로 보여준다.
+        mapView.select(pin, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath) as? MapTableCell
+        cell?.pinImageView.isHidden = true
+    }
+    
+    
+
+    
     
     // MARK: - Action
     
@@ -233,15 +270,26 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
     }
     
     @IBAction func currentLocaButtonPressed(_ sender: Any) {
+        // 1. 지도 위에 기존에 찍힌 핀을 없앤다.
+        mapView.removeAllPOIItems()
+        
+        // 2. 현재 위치를 찾아 지도 중앙에 표시한다.
         mapView.currentLocationTrackingMode = .onWithoutHeading
-        print(mapView.mapCenterPoint)
+        mapView.showCurrentLocationMarker = true
+        
+        // 3. 현재위치 마커 위에 핀을 만든다.
+        let pin : MTMapPOIItem = pinItem(latitude: mapView.mapCenterPoint.mapPointGeo().latitude, longitude: mapView.mapCenterPoint.mapPointGeo().longitude)
+        
+        // 4. 지도 위에 핀을 보여준다.
+        mapView.add(pin)
+        mapView.fitAreaToShowAllPOIItems()
+        
+        // 5. 핀을 선택한 상태로 보여준다.
+        mapView.select(pin, animated: true)
     }
     
     // searchResultButtonPressed : 검색결과 버튼을 누를 때마다, 검색결과 테이블을 나타내거나 없앤다.
     @IBAction func searchResultButtonPressed(_ sender: Any) {
-        print("originY: \(self.searchResultbuttonOriginY)")
-        print("minY: \(self.searchResultButton.frame.minY)")
-        
         if searchResultbuttonOriginY >= self.searchResultButton.frame.minY {
             self.mapSearchConfigureUI(.searched)
         } else {
@@ -254,21 +302,31 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
     
     func mapSearchConfigureUI(_ mapSearchInState: mapSearchInState) {
         switch(mapSearchInState) {
-        case .willSearch:
-            self.mapView.frame = CGRect(x: self.mapFrameView.frame.minX, y: self.mapFrameView.frame.minY, width: self.mapFrameView.frame.width, height: self.mapFrameView.frame.height)
+        case .prepare:
+            self.searchResultButton.layer.borderWidth = 1
+            self.searchResultButton.layer.borderColor = UIColor.lightGray.cgColor
         
         case .searching:
+            // 1. 지도 뷰을 올리고, 결과버튼과 테이블 뷰를 보여주기 위해 뷰의 프레임을 조정한다.
             self.mapView.frame = CGRect(x: self.mapFrameView.frame.minX, y: self.mapFrameView.frame.minY, width: self.mapFrameView.frame.width, height: self.mapFrameView.frame.height - self.searchResultButton.frame.height - self.tableOriginHeight)
             self.searchResultButton.frame = CGRect(x: self.searchResultButton.frame.minX, y: searchResultbuttonOriginY, width: self.searchResultButton.frame.width, height: self.searchResultButton.frame.height)
             self.mapTableView.frame = CGRect(x: self.mapTableView.frame.minX, y: self.mapTableView.frame.minY, width: self.mapTableView.frame.width, height: tableOriginHeight)
             self.mapTableView.rowHeight = 60
             
+            // 2. 검색결과 버튼의 이름을 바꾼다.
+            self.searchResultButton.setTitle("검색결과 ▼", for: .normal)
+
+            
+            
+
         case .searched:
+            // 1. 지도 뷰를 크게 보여주고, 테이블 뷰를 없애기 위해 뷰의 프레임을 조정한다.
             self.mapView.frame = CGRect(x: self.mapFrameView.frame.minX, y: self.mapFrameView.frame.minY, width: self.mapFrameView.frame.width, height: self.mapFrameView.frame.height - self.searchResultButton.frame.height)
-            
             self.mapTableView.frame = CGRect(x: self.mapTableView.frame.minX, y: self.mapTableView.frame.minY, width: self.mapTableView.frame.width, height: 0)
-            
             self.searchResultButton.frame = CGRect(x: self.searchResultButton.frame.minX, y: self.searchResultbuttonOriginY + self.tableOriginHeight, width: self.searchResultButton.frame.width, height: self.searchResultButton.frame.height)
+            
+            // 2. 검색결과 버튼의 이름을 바꾼다.
+            self.searchResultButton.setTitle("검색결과 ▲", for: .normal)
             
         }
     }
