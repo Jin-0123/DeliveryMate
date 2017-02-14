@@ -32,6 +32,7 @@ struct MapConstants {
             static let Longitude = "longitude"
             static let NewAddress = "newAddress"
             static let Address = "address"
+            static let DongCode	= "addressBCode"
     }
     
     struct MapResponseValues {

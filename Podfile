@@ -10,5 +10,6 @@ target 'DeliveryMate' do
   pod 'Firebase/Auth'
   pod 'Firebase/Database'
   pod 'GoogleSignIn'
-
+  pod 'AlamofireObjectMapper', '~> 4.0'
+  pod 'Alamofire', '~> 4.3'
 end
