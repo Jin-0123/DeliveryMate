@@ -20,18 +20,10 @@
             <objects>
                 <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="sG9-Iw-kLo" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <keyCommands>
-                        <keyCommand/>
-                    </keyCommands>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="jpx-Js-gAv">
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="number" keyPath="keyPath">
-                                <integer key="value" value="1"/>
-                            </userDefinedRuntimeAttribute>
-                        </userDefinedRuntimeAttributes>
                     </tabBar>
                     <connections>
                         <segue destination="oSl-2N-B1o" kind="relationship" relationship="viewControllers" id="u6U-rh-WTg"/>
