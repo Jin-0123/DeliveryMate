@@ -20,12 +20,21 @@
             <objects>
                 <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="sG9-Iw-kLo" sceneMemberID="viewController">
                     <toolbarItems/>
+                    <keyCommands>
+                        <keyCommand/>
+                    </keyCommands>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="jpx-Js-gAv">
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="keyPath">
+                                <integer key="value" value="1"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
                     </tabBar>
                     <connections>
+                        <segue destination="oSl-2N-B1o" kind="relationship" relationship="viewControllers" id="u6U-rh-WTg"/>
                         <segue destination="iom-OO-9CF" kind="relationship" relationship="viewControllers" id="fLr-Ev-PgG"/>
                         <segue destination="NSC-YW-zVE" kind="relationship" relationship="viewControllers" id="wQM-U0-U1S"/>
                     </connections>
@@ -34,7 +43,7 @@
             </objects>
             <point key="canvasLocation" x="136.80000000000001" y="138.98050974512745"/>
         </scene>
-        <!--배달메이트-->
+        <!--1인분-->
         <scene sceneID="ymv-CL-AUy">
             <objects>
                 <viewController id="SVj-iy-euB" customClass="MainViewController" customModule="DeliveryMate" customModuleProvider="target" sceneMemberID="viewController">
@@ -123,7 +132,7 @@
                             <constraint firstAttribute="trailingMargin" secondItem="4E7-zO-oAS" secondAttribute="trailing" id="Vs7-qd-rPR"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="배달메이트" id="w8h-NY-E51">
+                    <navigationItem key="navigationItem" title="1인분" id="w8h-NY-E51">
                         <barButtonItem key="leftBarButtonItem" title="지역설정" id="t0Y-Ch-YBb">
                             <connections>
                                 <action selector="pinButtonPressed:" destination="SVj-iy-euB" id="Pxi-g2-BSJ"/>
@@ -208,7 +217,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ntO-IH-v06">
-                                <rect key="frame" x="0.0" y="20" width="375" height="347"/>
+                                <rect key="frame" x="0.0" y="20" width="375" height="240"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="menuCell" textLabel="Ayd-xD-fmg" detailTextLabel="LZr-on-SEu" style="IBUITableViewCellStyleSubtitle" id="C8E-4A-ava">
@@ -241,8 +250,14 @@
                                     <outlet property="delegate" destination="6El-5r-E9u" id="HqN-NC-y17"/>
                                 </connections>
                             </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qrV-8a-fsz">
+                                <rect key="frame" x="0.0" y="598" width="375" height="69"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.82745098039999998" green="0.8980392157" blue="0.1450980392" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Button"/>
+                            </button>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsMultipleSelection="YES" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="VxH-he-A4L">
-                                <rect key="frame" x="0.0" y="375" width="375" height="292"/>
+                                <rect key="frame" x="0.0" y="246" width="375" height="292"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -293,6 +308,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rW5-xJ-0k5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3594.4000000000001" y="-111.0944527736132"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="nWG-gM-EYe">
+            <objects>
+                <viewController id="PWR-a5-NKW" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="L5A-ck-vCU"/>
+                        <viewControllerLayoutGuide type="bottom" id="l6W-zZ-NgP"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="scn-Wm-8ll">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="B31-Ue-EhP" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4307" y="-113"/>
         </scene>
         <!--Map Search View Controller-->
         <scene sceneID="fTc-v1-rl8">
@@ -506,13 +539,13 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Djj-3u-KFS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1058" y="644"/>
+            <point key="canvasLocation" x="1058" y="1366"/>
         </scene>
-        <!--배달메이트-->
+        <!--1인분-->
         <scene sceneID="MTy-bY-tK9">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="iom-OO-9CF" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="배달메이트" selectedImage="map-pin-icon" id="P0q-cI-1cY"/>
+                    <tabBarItem key="tabBarItem" title="1인분" id="P0q-cI-1cY"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="gQa-04-yq2">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -527,10 +560,47 @@
             </objects>
             <point key="canvasLocation" x="1058.4000000000001" y="-111.0944527736132"/>
         </scene>
+        <!--Ordered List View Controller-->
+        <scene sceneID="nBL-P2-wJ2">
+            <objects>
+                <viewController id="Inp-27-BQh" customClass="OrderedListViewController" customModule="DeliveryMate" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="x7F-tl-k7u"/>
+                        <viewControllerLayoutGuide type="bottom" id="wDy-hW-hyq"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="6iV-nU-jRV">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Wpl-wz-rxm"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jDy-7c-xze" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2007.2" y="601.34932533733138"/>
+        </scene>
+        <!--주문내역-->
+        <scene sceneID="hsl-nF-lIh">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="oSl-2N-B1o" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="주문내역" id="GX6-gK-CRb"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="lOd-Sn-8JE">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Inp-27-BQh" kind="relationship" relationship="rootViewController" id="Cfm-oi-Ekg"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="95D-7y-QY1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1068" y="601.34932533733138"/>
+        </scene>
     </scenes>
     <resources>
         <image name="delivery-mate-white" width="288" height="388"/>
-        <image name="map-pin-icon" width="29" height="29"/>
         <image name="map_pin_red" width="42" height="60"/>
         <image name="signin-line-white" width="258" height="13"/>
     </resources>

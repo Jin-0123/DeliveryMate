@@ -33,6 +33,12 @@ class MenuInfoObject : Mappable {
 }
 
 class MenuListViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
+    let MENUURL = Constants.SERVER_URL+"/menu"
+    let NAVIGATION_TITLE : String = "메뉴선택"
+    let NAVIGATION_RIGHT_BUTTON_TITLE = "선택완료"
+    let MAINMENU_TEXT = "메인메뉴"
+    let EXTRAMENU_TEXT = "추가메뉴"
+
     var storeId : Int = 0
     var menuInfoObject: [MenuInfoObject]?
     
@@ -42,8 +48,8 @@ class MenuListViewController : UIViewController, UITableViewDelegate, UITableVie
      @IBOutlet weak var extraMenuTableView: UITableView!
     
     override func viewDidLoad() {
-        self.navigationItem.title = "메뉴선택"
-        navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "주문하기"
+        self.navigationItem.title = NAVIGATION_TITLE
+        navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: NAVIGATION_RIGHT_BUTTON_TITLE
             , style: .plain, target: self, action: #selector(orderButtonPressed))
         navigationItem.rightBarButtonItem?.isEnabled = false
     
@@ -55,7 +61,7 @@ class MenuListViewController : UIViewController, UITableViewDelegate, UITableVie
             "store_id" : storeId
         ]
         
-        Alamofire.request("http://ec2-52-79-190-145.ap-northeast-2.compute.amazonaws.com:3000/menu", parameters: parameters, encoding: URLEncoding.default).responseArray(completionHandler: {
+        Alamofire.request(MENUURL, parameters: parameters, encoding: URLEncoding.default).responseArray(completionHandler: {
             (response: DataResponse<[MenuInfoObject]>) in
             if let menuInfo = response.result.value {
                 self.menuInfoObject = menuInfo
@@ -65,6 +71,9 @@ class MenuListViewController : UIViewController, UITableViewDelegate, UITableVie
         })
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        self.tabBarController?.tabBar.isHidden = false
+    }
 
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -86,13 +95,13 @@ class MenuListViewController : UIViewController, UITableViewDelegate, UITableVie
         
         if let menuInfo = self.menuInfoObject {
             if tableView == mainMenuTableView {
-                cell.detailTextLabel?.text = "메인메뉴"
+                cell.detailTextLabel?.text = MAINMENU_TEXT
                 cell.textLabel?.text = menuInfo[indexPath.row].menuName
             }
             
             let extraMenuIdx = indexPath.row + menuInfo[0].mainCount
             if tableView == extraMenuTableView && extraMenuIdx < menuInfo.count {
-                cell.detailTextLabel?.text = "추가메뉴"
+                cell.detailTextLabel?.text = EXTRAMENU_TEXT
                 cell.textLabel?.text = menuInfo[indexPath.row+menuInfo[0].mainCount].menuName
             }
         }
@@ -133,8 +142,9 @@ class MenuListViewController : UIViewController, UITableViewDelegate, UITableVie
             orderList["store_id"] = self.storeId
             if let menuInfo = self.menuInfoObject {
                 orderList["main_menu_id"] = menuInfo[0].menuId
-                for var i in 1 ..< orderMenuIdx.count {
-                    extraMenuList.append(["menu_id" : menuInfo[i].menuId!, "menu_count" : 1])
+                
+                for x in 1 ..< orderMenuIdx.count {
+                    extraMenuList.append(["menu_id" : menuInfo[x].menuId!, "menu_count" : 1])
                 }
                 orderList["extra_menu"] = extraMenuList
             }

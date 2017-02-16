@@ -8,9 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		43032FD01E4C5B0F00FBD6DA /* MapTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43032FCF1E4C5B0F00FBD6DA /* MapTableCell.swift */; };
-		4323E7591E4C6467004EC735 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4323E7581E4C6467004EC735 /* Location.swift */; };
+		430439281E5533C7006613B0 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430439271E5533C7006613B0 /* Constants.swift */; };
 		4323E75B1E4C6679004EC735 /* GCDBlackBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4323E75A1E4C6679004EC735 /* GCDBlackBox.swift */; };
 		43281FBA1E4DC482006A88CB /* MapSearchViewController - extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43281FB91E4DC482006A88CB /* MapSearchViewController - extension.swift */; };
+		432A8ED11E546DDA0045B29F /* OrderedListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 432A8ED01E546DDA0045B29F /* OrderedListViewController.swift */; };
 		4370AAF11E499B4C00A79F1F /* DaumMap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4370AAD41E499B4C00A79F1F /* DaumMap.framework */; };
 		4370AAF21E499B4C00A79F1F /* copyright.png in Resources */ = {isa = PBXBuildFile; fileRef = 4370AAD61E499B4C00A79F1F /* copyright.png */; };
 		4370AAF31E499B4C00A79F1F /* daum_copyright.png in Resources */ = {isa = PBXBuildFile; fileRef = 4370AAD71E499B4C00A79F1F /* daum_copyright.png */; };
@@ -59,16 +60,15 @@
 		437A79C61E49952900A80B89 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437A79C51E49952900A80B89 /* UserInfo.swift */; };
 		43AD27231E52C3BC00A4863C /* StoresListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AD27221E52C3BC00A4863C /* StoresListViewController.swift */; };
 		43AD27251E52DD2500A4863C /* MenuListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AD27241E52DD2500A4863C /* MenuListViewController.swift */; };
-		43E5247B1E4DB95D006B8085 /* Pnt2AddrConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E5247A1E4DB95D006B8085 /* Pnt2AddrConstants.swift */; };
-		43F13B8E1E49B8C500D51B4F /* MapConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F13B8D1E49B8C500D51B4F /* MapConstants.swift */; };
 		BDF23338243BFA104887B1FE /* Pods_DeliveryMate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C382A0A04E536B31A66EC848 /* Pods_DeliveryMate.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		43032FCF1E4C5B0F00FBD6DA /* MapTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapTableCell.swift; sourceTree = "<group>"; };
-		4323E7581E4C6467004EC735 /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = SOURCE_ROOT; };
+		430439271E5533C7006613B0 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = SOURCE_ROOT; };
 		4323E75A1E4C6679004EC735 /* GCDBlackBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCDBlackBox.swift; sourceTree = "<group>"; };
 		43281FB91E4DC482006A88CB /* MapSearchViewController - extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MapSearchViewController - extension.swift"; sourceTree = "<group>"; };
+		432A8ED01E546DDA0045B29F /* OrderedListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderedListViewController.swift; sourceTree = "<group>"; };
 		4370AAD41E499B4C00A79F1F /* DaumMap.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DaumMap.framework; sourceTree = "<group>"; };
 		4370AAD61E499B4C00A79F1F /* copyright.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = copyright.png; sourceTree = "<group>"; };
 		4370AAD71E499B4C00A79F1F /* daum_copyright.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = daum_copyright.png; sourceTree = "<group>"; };
@@ -120,8 +120,6 @@
 		437A79C51E49952900A80B89 /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		43AD27221E52C3BC00A4863C /* StoresListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoresListViewController.swift; sourceTree = "<group>"; };
 		43AD27241E52DD2500A4863C /* MenuListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuListViewController.swift; sourceTree = "<group>"; };
-		43E5247A1E4DB95D006B8085 /* Pnt2AddrConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pnt2AddrConstants.swift; sourceTree = "<group>"; };
-		43F13B8D1E49B8C500D51B4F /* MapConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapConstants.swift; sourceTree = "<group>"; };
 		547C3EC263B60EC13B02C4F8 /* Pods-DeliveryMate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeliveryMate.release.xcconfig"; path = "Pods/Target Support Files/Pods-DeliveryMate/Pods-DeliveryMate.release.xcconfig"; sourceTree = "<group>"; };
 		722B6B8EDE766CA5C1AEEC30 /* Pods-DeliveryMate.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeliveryMate.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DeliveryMate/Pods-DeliveryMate.debug.xcconfig"; sourceTree = "<group>"; };
 		C382A0A04E536B31A66EC848 /* Pods_DeliveryMate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DeliveryMate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -214,16 +212,15 @@
 				437A79A81E4991F100A80B89 /* AppDelegate.swift */,
 				437A79AA1E4991F100A80B89 /* ViewController.swift */,
 				437A79BC1E49934800A80B89 /* SignViewController.swift */,
+				432A8ED01E546DDA0045B29F /* OrderedListViewController.swift */,
 				437A79C31E49944000A80B89 /* MainViewController.swift */,
 				43AD27221E52C3BC00A4863C /* StoresListViewController.swift */,
 				43AD27241E52DD2500A4863C /* MenuListViewController.swift */,
 				4370AB1B1E49A88800A79F1F /* MapSearchViewController.swift */,
 				43281FB91E4DC482006A88CB /* MapSearchViewController - extension.swift */,
 				43032FCF1E4C5B0F00FBD6DA /* MapTableCell.swift */,
-				43F13B8D1E49B8C500D51B4F /* MapConstants.swift */,
-				43E5247A1E4DB95D006B8085 /* Pnt2AddrConstants.swift */,
 				437A79C51E49952900A80B89 /* UserInfo.swift */,
-				4323E7581E4C6467004EC735 /* Location.swift */,
+				430439271E5533C7006613B0 /* Constants.swift */,
 				4323E75A1E4C6679004EC735 /* GCDBlackBox.swift */,
 				437A79C01E49939F00A80B89 /* DeliveryMate-Bridging-Header.h */,
 				437A79AF1E4991F100A80B89 /* Assets.xcassets */,
@@ -414,20 +411,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				43F13B8E1E49B8C500D51B4F /* MapConstants.swift in Sources */,
 				437A79AB1E4991F100A80B89 /* ViewController.swift in Sources */,
-				4323E7591E4C6467004EC735 /* Location.swift in Sources */,
 				4370AB1C1E49A88800A79F1F /* MapSearchViewController.swift in Sources */,
 				43AD27231E52C3BC00A4863C /* StoresListViewController.swift in Sources */,
 				4323E75B1E4C6679004EC735 /* GCDBlackBox.swift in Sources */,
+				430439281E5533C7006613B0 /* Constants.swift in Sources */,
 				43281FBA1E4DC482006A88CB /* MapSearchViewController - extension.swift in Sources */,
 				43032FD01E4C5B0F00FBD6DA /* MapTableCell.swift in Sources */,
 				437A79BD1E49934800A80B89 /* SignViewController.swift in Sources */,
 				43AD27251E52DD2500A4863C /* MenuListViewController.swift in Sources */,
+				432A8ED11E546DDA0045B29F /* OrderedListViewController.swift in Sources */,
 				437A79A91E4991F100A80B89 /* AppDelegate.swift in Sources */,
 				437A79C41E49944000A80B89 /* MainViewController.swift in Sources */,
 				437A79C61E49952900A80B89 /* UserInfo.swift in Sources */,
-				43E5247B1E4DB95D006B8085 /* Pnt2AddrConstants.swift in Sources */,
 				437A79C21E49939F00A80B89 /* temp.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

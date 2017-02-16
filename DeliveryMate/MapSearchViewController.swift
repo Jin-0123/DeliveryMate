@@ -7,9 +7,74 @@
 //
 
 import UIKit
+import Alamofire
+import AlamofireObjectMapper
+import ObjectMapper
+
+// LocationInfoObject : 키워드 장소 검색의 응답 맵핑에 필요한 객체를 선언한다.
+class LocationInfoObject: Mappable {
+    var title = String()
+    var oldAddress = String()
+    var newAddress = String()
+    var latitude = String()
+    var longitude = String()
+    var dongCode = String()
+    
+    required init?(map: Map) {}
+    func mapping(map: Map) {
+        title <- map["title"]
+        oldAddress <- map["address"]
+        newAddress <- map["newAddress"]
+        latitude <- map["latitude"]
+        longitude <- map["longitude"]
+        dongCode <- map["addressBCode"]
+    }
+}
+
+// LocationInfo : 키워드 장소 검색의 응답 맵핑에 필요한 객체를 선언한다.
+class LocationInfo : Mappable {
+    var channel : [String:AnyObject]?
+    var item : [LocationInfoObject]?
+    
+    required init?(map: Map){
+    }
+    func mapping(map: Map) {
+        channel <- map["channel"]
+        item <- map["channel.item"]
+    }
+}
+
+// DongCodeInfoObject : 상세주소에서 법정동코드 검색의 응답 맵핑에 필요한 객체를 선언한다.
+class DongCodeInfoObject: Mappable {
+    var dongCode = String()
+    var address = String()
+    required init?(map: Map) {}
+    func mapping(map: Map) {
+        dongCode <- map["bcode"]
+        address <- map["region"]
+    }
+}
+
 
 class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBarDelegate {
+    // 1. 키워드로 장소 검색에 필요한 변수를 설정한다.
+    let LOCATION_KEYWORD_SEARCH_URL = "https://apis.daum.net/local/v1/search/keyword.json"
+    let DAUM_API_KEY = Constants.DAUM_API_KEY
     
+    // 2. 좌표로 법정동코드 검색에 필요한 변수를 설정한다.
+    let DETAIL_ADDRESS_URL = "https://apis.daum.net/local/geo/coord2detailaddr"
+    let INPUTCOORDSYSTEM = "WGS84"
+    let OUTPUT = "json"
+    
+    var delegate = MainViewController()
+    var tableItem = [[String:String]]()
+    var tableOriginHeight: CGFloat = 0
+    var searchResultbuttonOriginY: CGFloat = 0
+    var userSimpleAddress = ""
+    var userDongCode : String?
+    lazy var mapView: MTMapView = MTMapView.init(frame: self.mapFrameView.frame)
+    
+    enum mapSearchInState { case prepare, searching, searched }
     
     @IBOutlet weak var mapSearchBar: UISearchBar!
     @IBOutlet weak var navigationBar: UINavigationBar!
@@ -17,20 +82,8 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
     @IBOutlet weak var mapTableView: UITableView!
     @IBOutlet weak var searchResultButton: UIButton!
     
-    var delegate = MainViewController()
     
-    lazy var mapView: MTMapView = MTMapView.init(frame: self.mapFrameView.frame)
-
-    
-    var tableItem = [(String, String, String, String, String)]()
-    enum mapSearchInState { case prepare, searching, searched }
-    var tableOriginHeight: CGFloat = 0
-    var searchResultbuttonOriginY: CGFloat = 0
-    var userSimpleAddress = ""
-    var userDongCode : String?
-    
-    
-    // MARK: - App Life Cycled
+    // MARK: - App Life Cycle
     
     override func viewDidLoad() {
         
@@ -38,7 +91,7 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
         mapSearchBar.delegate = self
         
         // 2. daum 지도를 위한 초기화를 한다.
-        mapView.daumMapApiKey = "d740ee324a906cde3544c4dee13eaf3f"
+        mapView.daumMapApiKey = Constants.DAUM_MAP_API_KEY
         mapView.delegate = self
         mapView.baseMapType = .standard
         
@@ -61,30 +114,6 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
         self.mapSearchConfigureUI(.prepare)
     }
     
-
-    // daumMapURLFromParameters : 장소검색 요청에 필요한 parameter를 만든다.
-    private func daumMapURLFromParameters(_ parameters: [String: AnyObject],_ searchType: String) -> URL {
-        var components = URLComponents()
-        
-        if searchType == "keywordSearch" {
-            components.scheme = MapConstants.DaumMap.APIScheme
-            components.host = MapConstants.DaumMap.APIHost
-            components.path = MapConstants.DaumMap.APIPath
-        } else {
-            components.scheme = Pnt2AddrConstants.DaumMap.APIScheme
-            components.host = Pnt2AddrConstants.DaumMap.APIHost
-            components.path = Pnt2AddrConstants.DaumMap.APIPath
-        }
-        
-        components.queryItems = [URLQueryItem]()
-        for (key, value) in parameters {
-            let queryItem = URLQueryItem(name: key, value: "\(value)")
-            components.queryItems!.append(queryItem)
-        }
-        return components.url!
-    }
-    
-    
     // MARK: - searchBar
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -95,120 +124,45 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
         self.tableItem = []
         
         if let keyword = self.mapSearchBar.text {
-            let methodParameters = [
-                MapConstants.MapParameterKeys.APIKey : MapConstants.MapParameterValues.APIKey,
-                MapConstants.MapParameterKeys.Query : keyword
-                ] as [String : Any]
+            let parameters : Parameters = [
+                "query" : keyword,
+                "apikey" : DAUM_API_KEY
+            ]
             
-            // create session and request
-            let session = URLSession.shared
-            
-            
-            let request = URLRequest(url: daumMapURLFromParameters(methodParameters as [String : AnyObject], "keywordSearch"))
-            
-            print("request: \(request)")
-            // create network request
-            let task = session.dataTask(with: request) { (data, response, error) in
-                
-                
-                
-                // if an error occurs, print it and re-enable the UI
-                func displayError(_ error: String) {
-                    print(error)
-                }
-                
-                /* GUARD: Was there an error? */
-                guard (error == nil) else {
-                    displayError("There was an error with your request: \(error)")
-                    return
-                }
-                
-                /* GUARD: Did we get a successful 2XX response? */
-                guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                    displayError("Your request returned a status code other than 2xx!")
-                    return
-                }
-                
-                /* GUARD: Was there any data returned? */
-                guard let data = data else {
-                    displayError("No data was returned by the request!")
-                    return
-                }
-                
-                // parse the data
-                let parsedResult: [String:AnyObject]!
-                do {
-                    parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:AnyObject]
-                    
-                } catch {
-                    displayError("Could not parse the data as JSON: '\(data)'")
-                    return
-                }
-                
-                guard let channel = parsedResult[MapConstants.MapResponseKeys.Channel] as? [String:AnyObject] else {
-                    displayError("Cannot find keys 'channel' in \(parsedResult)")
-                    return
-                }
-                
-                
-                guard let items = channel[MapConstants.MapResponseKeys.Item] as? [[String:AnyObject]] else {
-                    displayError("Cannot find keys '\(MapConstants.MapResponseKeys.Item)' in \(channel)")
-                    return
-                }
-                
-                for item in items {
-                    guard let title = item[MapConstants.MapResponseKeys.Title] as? String else {
-                        displayError("Cannot find keys '\(MapConstants.MapResponseKeys.Title)' in \(item)")
-                        return
+            Alamofire.request(LOCATION_KEYWORD_SEARCH_URL, parameters: parameters, encoding: URLEncoding.default).responseObject(completionHandler: {
+                (response: DataResponse<LocationInfo>) in
+                if let locationInfo = response.result.value?.item {
+                    for item in locationInfo {
+                        if item.newAddress != "" {
+                            self.tableItem.append(["title":item.title,"address":item.newAddress, "latitude":item.latitude,"longitude":item.longitude,"dongCode":item.dongCode])
+                        } else {
+                            self.tableItem.append(["title":item.title,"address":item.oldAddress, "latitude":item.latitude,"longitude":item.longitude,"dongCode":item.dongCode])
+                        }
+                        
                     }
                     
-                    guard let newAddress = item[MapConstants.MapResponseKeys.NewAddress] as? String else {
-                        displayError("Cannot find keys '\(MapConstants.MapResponseKeys.NewAddress)' in \(item)")
-                        return
+                    if self.tableItem.count != 0 {
+                        // 1. 테이블데이터를 reload 한다.
+                        self.mapTableView.reloadData()
+                        
+                        // 2. 검색상태로 뷰 UI를 변경한다.
+                        self.mapSearchConfigureUI(.searching)
+                        
+                        // 3. 첫번째 셀을 선택한다.
+                        self.mapTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: UITableViewScrollPosition.top)
+                        self.tableView(self.mapTableView, didSelectRowAt: IndexPath(row: 0, section: 0))
+                    } else {
+                        // 4. 검색결과가 없을 경우, 경고창을 띄워준다.
+                        let alert = UIAlertController(title: "", message: "검색결과가 없습니다", preferredStyle: .alert)
+                        let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+                        alert.addAction(cancel)
+                        self.present(alert, animated: false, completion: nil)
                     }
-                    
-                    guard let address = item[MapConstants.MapResponseKeys.Address] as? String else {
-                        displayError("Cannot find keys '\(MapConstants.MapResponseKeys.Address)' in \(item)")
-                        return
-                    }
-                    
-                    guard let latitude = item[MapConstants.MapResponseKeys.Latitude] as? String else {
-                        displayError("Cannot find keys '\(MapConstants.MapResponseKeys.Latitude)' in \(item)")
-                        return
-                    }
-                    
-                    guard let longitude = item[MapConstants.MapResponseKeys.Longitude] as? String else {
-                        displayError("Cannot find keys '\(MapConstants.MapResponseKeys.Longitude)' in \(item)")
-                        return
-                    }
-                    
-                    guard let dongCode = item[MapConstants.MapResponseKeys.DongCode] as? String else {
-                        displayError("Cannot find keys '\(MapConstants.MapResponseKeys.DongCode)' in \(item)")
-                        return
-                    }
-                    
-                    self.userDongCode = dongCode
-                    self.tableItem.append(title, address, newAddress, latitude, longitude)
-                   
                 }
                 
-                performUIUpdatesOnMain {
-                    // 1. 테이블데이터를 reload 한다.
-                    self.mapTableView.reloadData()
-                    
-                    // 2. 검색상태로 뷰 UI를 변경한다.
-                    self.mapSearchConfigureUI(.searching)
-                    
-                    // 3. 첫번째 셀을 선택한다.
-                    self.mapTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: UITableViewScrollPosition.top)
-                    self.tableView(self.mapTableView, didSelectRowAt: IndexPath(row: 0, section: 0))
-                    
-                }
-            }
-            
+                
+            })
             searchBar.resignFirstResponder()
-            task.resume()
-
         }
     }
     
@@ -216,7 +170,23 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
     
     func mapView(_ mapView: MTMapView!, singleTapOn mapPoint: MTMapPoint!) {
         self.mapSearchBar.resignFirstResponder()
-        self.mapSearchConfigureUI(.searched)
+        // 1. 검색결과가 있을 경우에만 뷰의 UI를 변경해준다.
+        if self.tableItem.count != 0 {
+            self.mapSearchConfigureUI(.searched)
+        }
+    }
+    
+    // doubleTapOn : 두번 탭했을 경우, 사용자의 터치 지점에 핀을 보여준다.
+    func mapView(_ mapView: MTMapView!, doubleTapOn mapPoint: MTMapPoint!) {
+        // 1. 현재 위치 트레킹을 중지한다.
+        self.mapView.currentLocationTrackingMode = .off
+        self.mapView.showCurrentLocationMarker = false
+        
+        // 2. 지도 위에 기존에 찍힌 핀을 없앤다.
+        mapView.removeAllPOIItems()
+        
+        // 3. 법정동코드를 가져오고, 핀을 찍는다.
+        pnt2ADongCode(location: mapPoint)
     }
     
     func mapView(_ mapView: MTMapView!, touchedCalloutBalloonOf poiItem: MTMapPOIItem!) {
@@ -224,16 +194,22 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
         self.mapView.currentLocationTrackingMode = .off
         self.mapView.showCurrentLocationMarker = false
         
-        self.delegate.userSimpleAddress = poiItem.userObject as? String
+        // 2. Main 화면에 사용자의 주소와 법정동코드를 넘겨준다.
+        self.delegate.userSimpleAddress = (poiItem.userObject as? Dictionary)?["address"]
+        self.delegate.userDongCode = (poiItem.userObject as? Dictionary)?["dongCode"]
         
-        if let userDongCode = self.userDongCode {
-            self.delegate.userDongCode = userDongCode
-        }
-    
         self.dismiss(animated: true, completion: nil)
     }
     
-    func pinItem(address: String, latitude: Double, longitude: Double) -> MTMapPOIItem {
+    func mapView(_ mapView: MTMapView!, updateCurrentLocation location: MTMapPoint!, withAccuracy accuracy: MTMapLocationAccuracy) {
+        // 1. 지도 위에 기존에 찍힌 핀을 없앤다.
+        mapView.removeAllPOIItems()
+        
+        // 2. 법정동코드를 가져오고, 핀을 찍는다.
+        pnt2ADongCode(location: location)
+    }
+    
+    func pinItem(address: String, dongCode: String, latitude: Double, longitude: Double) -> MTMapPOIItem {
         let item = MTMapPOIItem()
         item.itemName = address
         item.markerType = .redPin
@@ -241,10 +217,37 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
         item.mapPoint = MTMapPoint(geoCoord: .init(latitude: latitude, longitude: longitude))
         item.showAnimationType = .noAnimation
         item.customImageAnchorPointOffset = .init(offsetX: 30, offsetY: 0)
-        item.userObject = address as NSObject!
+        item.userObject = ["address":address, "dongCode":dongCode] as NSObject!
         return item
     }
     
+    func pnt2ADongCode(location: MTMapPoint!) {
+        let parameters : Parameters = [
+            "apikey" : DAUM_API_KEY,
+            "output" : OUTPUT,
+            "x" : location.mapPointGeo().longitude,
+            "y" : location.mapPointGeo().latitude,
+            "inputCoordSystem" : INPUTCOORDSYSTEM
+        ]
+        
+        Alamofire.request(DETAIL_ADDRESS_URL, parameters: parameters, encoding: URLEncoding.default).responseObject(completionHandler: {
+            (response: DataResponse<DongCodeInfoObject>) in
+            if let dongCodeInfo = response.result.value {
+                self.userSimpleAddress = dongCodeInfo.address
+                self.userDongCode = dongCodeInfo.dongCode
+                
+                // 1. 핀을 초기화한다.
+                let pin : MTMapPOIItem = self.pinItem(address: dongCodeInfo.address, dongCode:dongCodeInfo.dongCode , latitude: self.mapView.mapCenterPoint.mapPointGeo().latitude, longitude: self.mapView.mapCenterPoint.mapPointGeo().longitude)
+                
+                // 2. 지도 위에 핀을 보여준다.
+                self.mapView.add(pin)
+                self.mapView.fitAreaToShowAllPOIItems()
+                
+                // 3. 핀을 선택한 상태로 보여준다.
+                self.mapView.select(pin, animated: true)
+            }
+        })
+    }
     
     
     // MARK: - Action
@@ -267,96 +270,7 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
         mapView.currentLocationTrackingMode = .onWithoutHeading
         mapView.showCurrentLocationMarker = true
         
-        
-        
-        let methodParameters = [
-            Pnt2AddrConstants.MapParameterKeys.APIKey : Pnt2AddrConstants.MapParameterValues.APIKey,
-            Pnt2AddrConstants.MapParameterKeys.Output : Pnt2AddrConstants.MapParameterValues.Output,
-            Pnt2AddrConstants.MapParameterKeys.Latitude : mapView.mapCenterPoint.mapPointGeo().latitude,
-            Pnt2AddrConstants.MapParameterKeys.Longitude: mapView.mapCenterPoint.mapPointGeo().longitude
-            ] as [String : Any]
-            
-        // create session and request
-        let session = URLSession.shared
-            
-            
-        let request = URLRequest(url: daumMapURLFromParameters(methodParameters as [String : AnyObject], "addressSearch"))
-            
-        print("request: \(request)")
-        // create network request
-        let task = session.dataTask(with: request) { (data, response, error) in
-            print("response: \(response)")
-
-            
-            // if an error occurs, print it and re-enable the UI
-            func displayError(_ error: String) {
-                print(error)
-            }
-                
-            /* GUARD: Was there an error? */
-            guard (error == nil) else {
-                displayError("There was an error with your request: \(error)")
-                return
-            }
-                
-            /* GUARD: Did we get a successful 2XX response? */
-            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                displayError("Your request returned a status code other than 2xx!")
-                return
-            }
-            
-            /* GUARD: Was there any data returned? */
-            guard let data = data else {
-                displayError("No data was returned by the request!")
-                return
-            }
-                
-            // parse the data
-            let parsedResult: [String:AnyObject]!
-            do {
-                parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments)as! [String:AnyObject]
-                    
-            } catch {
-                displayError("Could not parse the data as JSON: '\(data)'")
-                return
-            }
-                
-            guard let Do = parsedResult[Pnt2AddrConstants.MapResponseKeys.Do] as? String else {
-                displayError("Cannot find keys 'Do' in \(parsedResult)")
-                return
-            }
-            
-            guard let Gu = parsedResult[Pnt2AddrConstants.MapResponseKeys.Gu] as? String else {
-                displayError("Cannot find keys 'Gu' in \(parsedResult)")
-                return
-            }
-            
-            guard let Dong = parsedResult[Pnt2AddrConstants.MapResponseKeys.Dong] as? String else {
-                displayError("Cannot find keys 'Dong' in \(parsedResult)")
-                return
-            }
-            
-            guard let dongCode = parsedResult[Pnt2AddrConstants.MapResponseKeys.DongCode] as? String else {
-                displayError("Cannot find keys 'DongCode' in \(parsedResult)")
-                return
-            }
-            
-            self.userSimpleAddress = Do+" "+Gu+" "+Dong
-            self.userDongCode = dongCode
-                        
-            performUIUpdatesOnMain {
-                let pin : MTMapPOIItem = self.pinItem(address: self.userSimpleAddress,latitude: self.mapView.mapCenterPoint.mapPointGeo().latitude, longitude: self.mapView.mapCenterPoint.mapPointGeo().longitude)
-                    
-                // 4. 지도 위에 핀을 보여준다.
-                self.mapView.add(pin)
-                self.mapView.fitAreaToShowAllPOIItems()
-                    
-                // 5. 핀을 선택한 상태로 보여준다.
-                self.mapView.select(pin, animated: true)
-            }
-        }
-        task.resume()
-        
+        pnt2ADongCode(location: mapView.mapCenterPoint)
     }
     
     
