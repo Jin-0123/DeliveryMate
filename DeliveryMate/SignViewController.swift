@@ -16,8 +16,10 @@ class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
     @IBOutlet weak var googleSignOutButton: UIButton!
     @IBOutlet weak var userNameLabel: UILabel!
     
+    let userDefaults = UserDefaults.standard
     var userInfo: UserInfo?
     enum signInState { case signIn, signOut }
+    
     
     
     override func viewDidLoad() {
@@ -60,8 +62,13 @@ class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
                 return
             }
             
+            if let userId = user?.uid {
+            }
+            
             if let userName = user?.displayName {
                 self.userInfo = UserInfo.init(userName: userName)
+                userDefaults.string(forKey: <#T##String#>)
+
                 self.signConfigureUI(.signIn)
                 
             } else {

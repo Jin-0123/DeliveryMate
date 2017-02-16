@@ -71,6 +71,6 @@ fastlane/screenshots
 fastlane/test_output
 
 # key constants
-DeliveryMate/Constants.swift
+Constants.swift
 
 # End of https://www.gitignore.io/api/swift
