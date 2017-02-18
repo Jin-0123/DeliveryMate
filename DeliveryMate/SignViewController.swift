@@ -9,17 +9,28 @@
 import UIKit
 import Firebase
 import GoogleSignIn
+import Alamofire
+import AlamofireObjectMapper
+import ObjectMapper
 
+// UserInfoObject : 유저정보요청의 응답 맵핑에 필요한 객체를 선언한다.
+class UserInfoObject: Mappable {
+    var user_id = Int()
+    required init?(map: Map) {}
+    func mapping(map: Map) {
+        user_id <- map["user_id"]
+    }
+}
 
 class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDelegate {
+    let USER_URL = Constants.SERVER_URL+"/user"
+    var callView : String?
+    
     @IBOutlet weak var googleSignInButton: GIDSignInButton!
     @IBOutlet weak var googleSignOutButton: UIButton!
     @IBOutlet weak var userNameLabel: UILabel!
     
-    let userDefaults = UserDefaults.standard
-    var userInfo: UserInfo?
     enum signInState { case signIn, signOut }
-    
     
     
     override func viewDidLoad() {
@@ -30,17 +41,23 @@ class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
         GIDSignIn.sharedInstance().delegate = self
         GIDSignIn.sharedInstance().uiDelegate = self
         
-        
-        // 2. 이미 sign in 상태라면, current user값을 user객체에 저장한다.
-        if let displayName = FIRAuth.auth()?.currentUser?.displayName {
-            userInfo = UserInfo.init(userName: displayName)
+        // 2. 로그인 상태가 아니라면, 유저정보를 초기화한다.
+        if FIRAuth.auth()?.currentUser != nil {
+            self.signConfigureUI(.signIn)
+        } else {
+            let appDomain = Bundle.main.bundleIdentifier
+            UserDefaults.standard.removePersistentDomain(forName: appDomain!)
+            self.signConfigureUI(.signOut)
         }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if userInfo != nil {
+        if FIRAuth.auth()?.currentUser != nil {
             self.signConfigureUI(.signIn)
         } else {
+            let appDomain = Bundle.main.bundleIdentifier
+            UserDefaults.standard.removePersistentDomain(forName: appDomain!)
             self.signConfigureUI(.signOut)
         }
     }
@@ -63,18 +80,41 @@ class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
             }
             
             if let userId = user?.uid {
+                var parameters : Parameters = [
+                    "uid" : userId
+                ]
+                
+                if let dong_code = UserDefaults.standard.string(forKey: Constants.User.USER_DONG_CODE) {
+                    parameters["dong_code"] = dong_code
+                }
+                
+                if let last_simple_address = UserDefaults.standard.string(forKey: Constants.User.USER_SIMPLE_ADDRESS) {
+                    parameters["last_simple_address"] = last_simple_address
+                }
+                
+                if let user_address = UserDefaults.standard.string(forKey: Constants.User.USER_ADDRESS) {
+                    parameters["address"] = user_address
+                }
+                
+                Alamofire.request(self.USER_URL, method: .post, parameters: parameters, encoding: JSONEncoding.default).responseObject(completionHandler: {
+                    (response: DataResponse<UserInfoObject>) in
+                    if let userInfo = response.result.value {
+                        UserDefaults.standard.set(userInfo.user_id, forKey: Constants.User.USER_ID)
+                    }
+                })
+                
+                if self.callView == "orderView" {
+                    self.dismiss(animated: true, completion: nil)
+                }
             }
-            
+        
             if let userName = user?.displayName {
-                self.userInfo = UserInfo.init(userName: userName)
-                userDefaults.string(forKey: <#T##String#>)
-
+                UserDefaults.standard.set(userName, forKey: Constants.User.USER_NAME)
                 self.signConfigureUI(.signIn)
                 
             } else {
                 self.signConfigureUI(.signOut)
             }
-            
         }
     }
     
@@ -83,8 +123,14 @@ class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
     @IBAction func googleSignOutButtonPressed() {
         let firebaseAuth = FIRAuth.auth()
         do {
+            // 1. 파이어베이스 로그아웃을 한다.
             try firebaseAuth?.signOut()
-            userInfo = nil
+           
+            // 2. UserDefault 정보를 삭제한다.
+            let appDomain = Bundle.main.bundleIdentifier
+            UserDefaults.standard.removePersistentDomain(forName: appDomain!)
+            
+            // 3. 로그아웃 UI로 변경한다.
             signConfigureUI(.signOut)
             
         } catch let signOutError as NSError {
@@ -97,9 +143,11 @@ class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
     func signConfigureUI(_ signState: signInState) {
         switch(signState) {
         case .signIn:
-            self.userNameLabel.text = userInfo?.userName
-            self.googleSignInButton.isHidden = true
-            self.googleSignOutButton.isHidden = false
+            if UserDefaults.standard.object(forKey: Constants.User.USER_NAME) != nil {
+                self.userNameLabel.text = UserDefaults.standard.object(forKey: Constants.User.USER_NAME) as! String?
+                self.googleSignInButton.isHidden = true
+                self.googleSignOutButton.isHidden = false
+            }
             
         case .signOut:
             self.userNameLabel.text = "Sign In"

@@ -76,10 +76,11 @@ class StoresListViewController : UIViewController, UITableViewDelegate, UITableV
     // didSelectRowAt : 셀이 선택되면, 선택된 매장 정보를 보여주는 화면을 띄운다.
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let menuListViewController : MenuListViewController
-        menuListViewController = self.storyboard?.instantiateViewController(withIdentifier: "menuList") as! MenuListViewController
+        menuListViewController = self.storyboard?.instantiateViewController(withIdentifier: "menuView") as! MenuListViewController
         
-        if let storeId =  storesInfoObject[indexPath.row].storeId {
-            menuListViewController.storeId = storeId
+        if let storeId = storesInfoObject[indexPath.row].storeId, let storeName = storesInfoObject[indexPath.row].storeName
+        {
+            menuListViewController.storeInfo = (storeId, storeName)
             self.navigationController?.pushViewController(menuListViewController, animated: true)
         }
     }

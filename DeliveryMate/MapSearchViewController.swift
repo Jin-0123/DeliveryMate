@@ -66,7 +66,7 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
     let INPUTCOORDSYSTEM = "WGS84"
     let OUTPUT = "json"
     
-    var delegate = MainViewController()
+    var delegate : MainViewController?
     var tableItem = [[String:String]]()
     var tableOriginHeight: CGFloat = 0
     var searchResultbuttonOriginY: CGFloat = 0
@@ -195,9 +195,10 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
         self.mapView.showCurrentLocationMarker = false
         
         // 2. Main 화면에 사용자의 주소와 법정동코드를 넘겨준다.
-        self.delegate.userSimpleAddress = (poiItem.userObject as? Dictionary)?["address"]
-        self.delegate.userDongCode = (poiItem.userObject as? Dictionary)?["dongCode"]
-        
+        if let delegate = delegate {
+            delegate.userSimpleAddress = (poiItem.userObject as? Dictionary)?["address"]
+            delegate.userDongCode = (poiItem.userObject as? Dictionary)?["dongCode"]
+        }
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -221,6 +222,7 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
         return item
     }
     
+    // pnt2ADongCode : 위도, 경도값으로 법정동코드를 검색한 후, 지도 위에 핀을 보여준다.
     func pnt2ADongCode(location: MTMapPoint!) {
         let parameters : Parameters = [
             "apikey" : DAUM_API_KEY,

@@ -11,14 +11,16 @@ import Alamofire
 import AlamofireObjectMapper
 import ObjectMapper
 
+// MenuInfoObject : 서버에서 받아온 메뉴 리스트 맵핑에 필요한 객체를 선언한다.
 class MenuInfoObject : Mappable {
-    var menuId : Int?
-    var menuName: String?
-    var menuType : String?
-    var requirePeopleNum : Int?
-    var price : Int?
-    var mainCount : Int = 0
-    var extraCount : Int = 0
+    var menuId = Int()
+    var menuName = String()
+    var menuType = String()
+    var requirePeopleNum = Int()
+    var price = Int()
+    var mainCount = Int()
+    var extraCount = Int()
+    var imageURL = String()
     
     required init?(map: Map) {}
     func mapping(map: Map) {
@@ -29,128 +31,98 @@ class MenuInfoObject : Mappable {
         price <- map["price"]
         mainCount <- map["main_count"]
         extraCount <- map["extra_count"]
+        imageURL <- map["image_url"]
     }
 }
 
 class MenuListViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
     let MENUURL = Constants.SERVER_URL+"/menu"
-    let NAVIGATION_TITLE : String = "메뉴선택"
-    let NAVIGATION_RIGHT_BUTTON_TITLE = "선택완료"
-    let MAINMENU_TEXT = "메인메뉴"
-    let EXTRAMENU_TEXT = "추가메뉴"
-
-    var storeId : Int = 0
-    var menuInfoObject: [MenuInfoObject]?
+    let EXTRA_MENU_TYPE : String = "extra"
     
+    // storeInfo : 선택한 매장 정보를 저장한다. (store_id, store_Name)
+    var storeInfo: (Int, String) = (0, "")
+    var menuInfoObject: [MenuInfoObject]?
+
+    var menuDetailViewController = MenuDetailViewController()
+
+    enum selectState { case notSelect, selecting }
 
     
     @IBOutlet weak var mainMenuTableView: UITableView!
-     @IBOutlet weak var extraMenuTableView: UITableView!
+    
+    
+    // MARK: - App Life Cycle
     
     override func viewDidLoad() {
-        self.navigationItem.title = NAVIGATION_TITLE
-        navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: NAVIGATION_RIGHT_BUTTON_TITLE
-            , style: .plain, target: self, action: #selector(orderButtonPressed))
-        navigationItem.rightBarButtonItem?.isEnabled = false
-    
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        self.navigationItem.title = storeInfo.1
         self.tabBarController?.tabBar.isHidden = true
+        selectConfigureUI(.notSelect)
+        
         let parameters : Parameters = [
-            "store_id" : storeId
+            "store_id" : storeInfo.0
         ]
         
         Alamofire.request(MENUURL, parameters: parameters, encoding: URLEncoding.default).responseArray(completionHandler: {
             (response: DataResponse<[MenuInfoObject]>) in
+            self.menuDetailViewController = self.storyboard?.instantiateViewController(withIdentifier: "extraMenuView") as! MenuDetailViewController
+            
+            self.menuDetailViewController.storeInfo = self.storeInfo
             if let menuInfo = response.result.value {
                 self.menuInfoObject = menuInfo
+                for menu in menuInfo {
+                    if menu.menuType == self.EXTRA_MENU_TYPE {
+                        self.menuDetailViewController.extraMenuList.append((menu.menuId, menu.menuName, menu.price))
+                    }
+                }
             }
+            self.mainMenuTableView.rowHeight = 120
             self.mainMenuTableView.reloadData()
-            self.extraMenuTableView.reloadData()
         })
     }
+    
     
     override func viewWillDisappear(_ animated: Bool) {
         self.tabBarController?.tabBar.isHidden = false
     }
 
+    // MARK: - Table view data source
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let menuFirstInfo = menuInfoObject  {
-            if tableView == mainMenuTableView {
-                return menuFirstInfo[0].mainCount
-            }
-            
-            if tableView == extraMenuTableView {
-                return menuFirstInfo[0].extraCount
-            }
+            return menuFirstInfo[0].mainCount
         }
         return 0
     }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "menuCell", for: indexPath) as UITableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "menuCell", for: indexPath) as! MenuCell
         
         if let menuInfo = self.menuInfoObject {
-            if tableView == mainMenuTableView {
-                cell.detailTextLabel?.text = MAINMENU_TEXT
-                cell.textLabel?.text = menuInfo[indexPath.row].menuName
-            }
+            cell.menuListNameLabel.text = menuInfo[indexPath.row].menuName
+            cell.menuListPriceLabel.text = String(menuInfo[indexPath.row].price)
+            cell.menuListPeopleNumLabel.text = String(menuInfo[indexPath.row].requirePeopleNum)
             
-            let extraMenuIdx = indexPath.row + menuInfo[0].mainCount
-            if tableView == extraMenuTableView && extraMenuIdx < menuInfo.count {
-                cell.detailTextLabel?.text = EXTRAMENU_TEXT
-                cell.textLabel?.text = menuInfo[indexPath.row+menuInfo[0].mainCount].menuName
-            }
         }
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let cell = tableView.cellForRow(at: indexPath as IndexPath) {
-            cell.accessoryType = .checkmark
+        if let menuInfo = self.menuInfoObject {
+            menuDetailViewController.mainMenuDic[Constants.Order.MAIN_MENU_ID] = String(menuInfo[indexPath.row].menuId)
+            menuDetailViewController.mainMenuDic[Constants.Order.MAIN_MANU_NAME] = menuInfo[indexPath.row].menuName
+            menuDetailViewController.mainMenuDic[Constants.Order.MAIN_MANU_PRICE] = String(menuInfo[indexPath.row].price)
+            menuDetailViewController.mainMenuDic[Constants.Order.MAIN_MANU_PEOPLE_NUM] = String(menuInfo[indexPath.row].requirePeopleNum)
         }
         
-        if tableView == mainMenuTableView {
-            navigationItem.rightBarButtonItem?.isEnabled = true
-        }
+        self.navigationController?.pushViewController(menuDetailViewController, animated: true)
     }
     
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        if let cell = tableView.cellForRow(at: indexPath as IndexPath) {
-            cell.accessoryType = .none
-        }
-        
-        if tableView == mainMenuTableView {
-            navigationItem.rightBarButtonItem?.isEnabled = false
-        }
-    }
-    
-    func orderButtonPressed() {
-        var orderList : [String : Any] = [:]
-        var extraMenuList = [[String: Any]]()
-        var orderMenuIdx : [IndexPath] = []
-        
-        if let mainMenuRow = self.mainMenuTableView.indexPathsForSelectedRows,
-            let extraMenuRow = self.extraMenuTableView.indexPathsForSelectedRows {
-            orderMenuIdx += mainMenuRow
-            orderMenuIdx += extraMenuRow
-            
-            orderList["user_id"] = 3
-            orderList["store_id"] = self.storeId
-            if let menuInfo = self.menuInfoObject {
-                orderList["main_menu_id"] = menuInfo[0].menuId
-                
-                for x in 1 ..< orderMenuIdx.count {
-                    extraMenuList.append(["menu_id" : menuInfo[x].menuId!, "menu_count" : 1])
-                }
-                orderList["extra_menu"] = extraMenuList
-            }
-            print(orderList)
-        }
-        
+    // MARK: UI Functions
+    func selectConfigureUI(_ selectState: selectState) {
         
     }
 }

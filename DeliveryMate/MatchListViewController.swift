@@ -12,10 +12,7 @@ import AlamofireObjectMapper
 import ObjectMapper
 
 
-class OrderedListViewController : UIViewController {
-
-    
-    
+class MatchListViewController : UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         
         
