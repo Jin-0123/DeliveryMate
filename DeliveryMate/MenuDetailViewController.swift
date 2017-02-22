@@ -7,25 +7,22 @@
 //
 
 import UIKit
+import Nuke
 
 class MenuDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
     let NAVIGATION_RIGHT_BUTTON_TITLE = "선택완료"
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+
     var menuListDelegate : MenuListViewController?
     
     // extraMenuDic : 서버에서 받아온 추가메뉴 리스트 (extra_menu_id, extra_menu_name, extra_menu_price)
     var extraMenuList : [(Int, String, Int)] = []
     
-    // storeInfo : 선택한 매장 정보를 저장한다. (store_id, store_Name)
-    var storeInfo: (Int, String) = (0,"")
-
-    // mainMenuDic : 선택한 메인메뉴 정보를 저장한다.
-    var mainMenuDic : [String:String] = [:]
-    
-    
-    // selectedExtraMenuDic : 선택된 추가메뉴를 저장해서 MenuList 화면으로 넘겨준다. (id: (count, price, name))
-    var selectedExtraMenuDic = [Int:(Int,Int,String)]()
-    
+    // tempExtraMenuDic : 사용자의 선택, 해제에 따라 추가메뉴를 저장한다. (id: (count, price, name))
+    var tempExtraMenuDic = [Int:(Int, Int, String)]()
     var totalPrice : Int = 0
+
+    
     
 
     // MARK: - Outlet
@@ -37,11 +34,16 @@ class MenuDetailViewController : UIViewController, UITableViewDelegate, UITableV
     // MARK: - App Life Cycle
 
     override func viewWillAppear(_ animated: Bool) {
-        self.navigationItem.title = mainMenuDic[Constants.Order.MAIN_MANU_NAME]
+
+        self.navigationItem.title = appDelegate.currentOrder.mainMenuDic[Constants.Order.MAIN_MANU_NAME]
         self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: NAVIGATION_RIGHT_BUTTON_TITLE, style: .plain, target: self, action: #selector(selectMenusButtonPressed))
         self.tabBarController?.tabBar.isHidden = true
-        self.totalPrice = self.totalPrice + Int(mainMenuDic[Constants.Order.MAIN_MANU_PRICE]!)!
-        self.totalPriceLabel.text = String(totalPrice)
+        
+        if self.totalPrice == 0 {
+            self.totalPrice = self.totalPrice + Int(appDelegate.currentOrder.mainMenuDic[Constants.Order.MAIN_MANU_PRICE]!)!
+        }
+        
+        self.totalPriceLabel.text = String(self.totalPrice)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -58,19 +60,24 @@ class MenuDetailViewController : UIViewController, UITableViewDelegate, UITableV
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
             
-            let cell = tableView.dequeueReusableCell(withIdentifier: "menuImageCell", for: indexPath) as! MenuImageCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "menuDetailCell", for: indexPath) as! MenuDetailCell
             cell.isUserInteractionEnabled = false
-            tableView.rowHeight = 200
+            cell.menuNameLabel.text = appDelegate.currentOrder.mainMenuDic[Constants.Order.MAIN_MANU_NAME]
+            cell.menuPriceLabel.text = appDelegate.currentOrder.mainMenuDic[Constants.Order.MAIN_MANU_PRICE]
+            cell.menuPeopleNumLabel.text = appDelegate.currentOrder.mainMenuDic[Constants.Order.MAIN_MANU_PEOPLE_NUM]
+            tableView.rowHeight = 100
             return cell
             
         } else if indexPath.row == 1 {
             
-            let cell = tableView.dequeueReusableCell(withIdentifier: "menuDetailCell", for: indexPath) as! MenuDetailCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "menuImageCell", for: indexPath) as! MenuImageCell
             cell.isUserInteractionEnabled = false
-            cell.menuNameLabel.text = mainMenuDic[Constants.Order.MAIN_MANU_NAME]
-            cell.menuPriceLabel.text = mainMenuDic[Constants.Order.MAIN_MANU_PRICE]
-            cell.menuPeopleNumLabel.text = mainMenuDic[Constants.Order.MAIN_MANU_PEOPLE_NUM]
-            tableView.rowHeight = 100
+            if let imageURL = appDelegate.currentOrder.mainMenuDic[Constants.Order.MAIN_MANU_IMAGE_URL] {
+                let imageURL = Constants.SERVER_URL+imageURL
+                let url = URL(string: imageURL)!
+                Nuke.loadImage(with: url, into: cell.menuImageView)
+            }
+            tableView.rowHeight = 200
             return cell
             
         } else {
@@ -79,38 +86,45 @@ class MenuDetailViewController : UIViewController, UITableViewDelegate, UITableV
             let idx = indexPath.row - 2
             cell.extraMenuNameLabel.text = extraMenuList[idx].1
             cell.extraMenuPriceLabel.text = String(extraMenuList[idx].2)
-            cell.checkImageView.isHidden = true
-            tableView.rowHeight = 80
+            tableView.rowHeight = 44
             return cell
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath as IndexPath) as? ExtraMenuCell {
-            cell.checkImageView.isHidden = false
-            cell.minusButton.isEnabled = false
-            cell.plusButton.isEnabled = false
-            if let extraMenuCount = Int(cell.extraMenuCountLabel.text!) {
-                let idx = indexPath.row - 2
-                self.selectedExtraMenuDic[extraMenuList[idx].0] = (extraMenuCount, extraMenuList[idx].2,extraMenuList[idx].1)
-                self.totalPrice = self.totalPrice + extraMenuCount * extraMenuList[idx].2
-                self.totalPriceLabel.text = String(totalPrice)
-            }
+                cell.minusButton.isEnabled = false
+                cell.plusButton.isEnabled = false
+                cell.checkBoxImageView.image = UIImage(named: "checked-box")
+
+            
+                if let extraMenuCount = Int(cell.extraMenuCountLabel.text!) {
+                    let idx = indexPath.row - 2
+
+                    self.tempExtraMenuDic[extraMenuList[idx].0] = (extraMenuCount, extraMenuList[idx].2,extraMenuList[idx].1)
+                    self.totalPrice =  self.totalPrice + extraMenuCount * extraMenuList[idx].2
+                    self.totalPriceLabel.text = String(self.totalPrice)
+                }
+            
         }
         
     }
     
+    
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath as IndexPath) as? ExtraMenuCell   {
-            cell.checkImageView.isHidden = true
-            cell.minusButton.isEnabled = true
-            cell.plusButton.isEnabled = true
-            let idx = indexPath.row - 2
-            self.selectedExtraMenuDic.removeValue(forKey: extraMenuList[idx].0)
-            if let extraMenuCount = Int(cell.extraMenuCountLabel.text!) {
-                self.totalPrice = self.totalPrice - extraMenuCount * extraMenuList[idx].2
-                self.totalPriceLabel.text = String(totalPrice)
-            }
+
+                cell.minusButton.isEnabled = true
+                cell.plusButton.isEnabled = true
+                cell.checkBoxImageView.image = UIImage(named: "check-box")
+
+                let idx = indexPath.row - 2
+            
+                if let extraMenuCount = Int(cell.extraMenuCountLabel.text!) {
+                    self.totalPrice = self.totalPrice - extraMenuCount * extraMenuList[idx].2
+                    self.totalPriceLabel.text = String(self.totalPrice)
+                }
+                tempExtraMenuDic.removeValue(forKey: extraMenuList[idx].0)            
         }
     }
     
@@ -119,10 +133,8 @@ class MenuDetailViewController : UIViewController, UITableViewDelegate, UITableV
     func selectMenusButtonPressed() {
         let orderController : OrderViewController
         orderController = self.storyboard?.instantiateViewController(withIdentifier: "orderView") as! OrderViewController
-        orderController.mainMenuDic = self.mainMenuDic
-        orderController.tempExtraMenuDic = self.selectedExtraMenuDic
-        orderController.storeInfo = self.storeInfo
-        orderController.totalPrice = self.totalPrice
+        appDelegate.currentOrder.extraMenuDic = self.tempExtraMenuDic
+        appDelegate.currentOrder.totalPrice = self.totalPrice
         orderController.delegate = self
         present(orderController, animated: true, completion: nil)
     }

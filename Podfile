@@ -12,4 +12,6 @@ target 'DeliveryMate' do
   pod 'GoogleSignIn'
   pod 'AlamofireObjectMapper', '~> 4.0'
   pod 'Alamofire', '~> 4.3'
+  pod 'Nuke', '~> 5.0'
+
 end

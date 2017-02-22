@@ -14,13 +14,15 @@ import GoogleSignIn
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    var orders = [Orders]()
-
-
+    
+    // currentOrder : 현재 사용자가 주문하고 있는 정보를 저장한다.
+    var currentOrder = OrderInfo()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
         FIRApp.configure()
+
+        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+        statusBar.backgroundColor = UIColor(red:0.50, green:0.77, blue:0.87, alpha:1.0)
         return true
     }
     
@@ -56,4 +58,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 }
+
+
 

@@ -10,8 +10,10 @@ import UIKit
 import Alamofire
 import AlamofireObjectMapper
 import ObjectMapper
+import Nuke
 
-class StoresInfoObject : Mappable {
+// StoresResponseInfo : 서버에서 받아온 매장 리스트 맵핑에 필요한 객체를 선언한다.
+class StoresResponseInfo: Mappable {
     var storeId : Int?
     var storeName: String?
     var imageURL : String?
@@ -25,12 +27,13 @@ class StoresInfoObject : Mappable {
 }
 
 class StoresListViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
-    let NAVIGATION_TITLE : String = "매장선택"
+    let NAVIGATION_TITLE: String = "매장선택"
     let STORES_URL = Constants.SERVER_URL+"/stores"
-    
-    var categoryId : Int = 0
-    var dongCode : String = ""
-    var storesInfoObject: [StoresInfoObject] = []
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    var storesResponseInfo: [StoresResponseInfo] = []
+
+    var categoryId: Int = 0
+    var dongCode: String = ""
     
     @IBOutlet weak var storesTableView: UITableView!
 
@@ -51,25 +54,32 @@ class StoresListViewController : UIViewController, UITableViewDelegate, UITableV
         
         // 2. 서버에 매장정보를 요청한다.
         Alamofire.request(STORES_URL, parameters: parameters, encoding: URLEncoding.default).responseArray(completionHandler: {
-            (response: DataResponse<[StoresInfoObject]>) in
+            (response: DataResponse<[StoresResponseInfo]>) in
             // 2-1. 응답 데이터를 매장 객체에 저장한다.
             if let storesInfo = response.result.value {
-                self.storesInfoObject = storesInfo
+                self.storesResponseInfo = storesInfo
             }
             // 2-2. 테이블 뷰를 다시 로드한다.
             self.storesTableView.reloadData()
         })
     }
     
+    
     // MARK: - Table view data source
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return storesInfoObject.count
+        return storesResponseInfo.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "storeCell", for: indexPath) as UITableViewCell
-        cell.textLabel?.text = storesInfoObject[indexPath.row].storeName
+        let cell = tableView.dequeueReusableCell(withIdentifier: "storeCell", for: indexPath) as! StoreListCell
+        cell.storeNameLabel.text = storesResponseInfo[indexPath.row].storeName
+        cell.storeImageView.circleImageView()
+        
+        let imageURL = Constants.SERVER_URL+storesResponseInfo[indexPath.row].imageURL!
+        let url = URL(string: imageURL)!
+        Nuke.loadImage(with: url, into: cell.storeImageView)
+        
         return cell
     }
     
@@ -78,9 +88,10 @@ class StoresListViewController : UIViewController, UITableViewDelegate, UITableV
         let menuListViewController : MenuListViewController
         menuListViewController = self.storyboard?.instantiateViewController(withIdentifier: "menuView") as! MenuListViewController
         
-        if let storeId = storesInfoObject[indexPath.row].storeId, let storeName = storesInfoObject[indexPath.row].storeName
+        if let storeId = storesResponseInfo[indexPath.row].storeId, let storeName = storesResponseInfo[indexPath.row].storeName
         {
-            menuListViewController.storeInfo = (storeId, storeName)
+            appDelegate.currentOrder.storeDic[Constants.Order.STORE_ID] = String(storeId)
+            appDelegate.currentOrder.storeDic[Constants.Order.STORE_NAME] = storeName
             self.navigationController?.pushViewController(menuListViewController, animated: true)
         }
     }

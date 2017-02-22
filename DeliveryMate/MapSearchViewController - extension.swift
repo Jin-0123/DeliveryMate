@@ -59,9 +59,6 @@ extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource {
     
     func mapSearchConfigureUI(_ mapSearchInState: mapSearchInState) {
         switch(mapSearchInState) {
-        case .prepare:
-            self.searchResultButton.layer.borderWidth = 1
-            self.searchResultButton.layer.borderColor = UIColor.lightGray.cgColor
             
         case .searching:
 
@@ -73,6 +70,7 @@ extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource {
             
             // 2. 검색결과 버튼의 이름을 바꾼다.
             self.searchResultButton.setTitle("검색결과 ▼", for: .normal)
+            self.searchResultButton.tintColor = UIColor.white
             
             
         case .searched:

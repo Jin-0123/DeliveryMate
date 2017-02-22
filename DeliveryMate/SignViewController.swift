@@ -53,6 +53,7 @@ class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
         if FIRAuth.auth()?.currentUser != nil {
             self.signConfigureUI(.signIn)
         } else {
@@ -60,6 +61,7 @@ class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
             UserDefaults.standard.removePersistentDomain(forName: appDomain!)
             self.signConfigureUI(.signOut)
         }
+        
     }
     
     
@@ -96,16 +98,20 @@ class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
                     parameters["address"] = user_address
                 }
                 
+                
                 Alamofire.request(self.USER_URL, method: .post, parameters: parameters, encoding: JSONEncoding.default).responseObject(completionHandler: {
                     (response: DataResponse<UserInfoObject>) in
+
                     if let userInfo = response.result.value {
                         UserDefaults.standard.set(userInfo.user_id, forKey: Constants.User.USER_ID)
                     }
+                    
+                    if self.callView == "modalView" {
+                        self.dismiss(animated: true, completion: {
+                            UserDefaults.standard.synchronize()
+                        })
+                    }
                 })
-                
-                if self.callView == "orderView" {
-                    self.dismiss(animated: true, completion: nil)
-                }
             }
         
             if let userName = user?.displayName {
@@ -129,6 +135,7 @@ class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
             // 2. UserDefault 정보를 삭제한다.
             let appDomain = Bundle.main.bundleIdentifier
             UserDefaults.standard.removePersistentDomain(forName: appDomain!)
+            UserDefaults.standard.synchronize()
             
             // 3. 로그아웃 UI로 변경한다.
             signConfigureUI(.signOut)
@@ -150,7 +157,7 @@ class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
             }
             
         case .signOut:
-            self.userNameLabel.text = "Sign In"
+            self.userNameLabel.text = ""
             self.googleSignInButton.isHidden = false
             self.googleSignOutButton.isHidden = true
             

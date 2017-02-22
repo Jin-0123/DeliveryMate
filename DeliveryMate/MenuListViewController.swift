@@ -10,9 +10,10 @@ import UIKit
 import Alamofire
 import AlamofireObjectMapper
 import ObjectMapper
+import Nuke
 
 // MenuInfoObject : 서버에서 받아온 메뉴 리스트 맵핑에 필요한 객체를 선언한다.
-class MenuInfoObject : Mappable {
+class MenuResponseInfo : Mappable {
     var menuId = Int()
     var menuName = String()
     var menuType = String()
@@ -38,14 +39,11 @@ class MenuInfoObject : Mappable {
 class MenuListViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
     let MENUURL = Constants.SERVER_URL+"/menu"
     let EXTRA_MENU_TYPE : String = "extra"
-    
-    // storeInfo : 선택한 매장 정보를 저장한다. (store_id, store_Name)
-    var storeInfo: (Int, String) = (0, "")
-    var menuInfoObject: [MenuInfoObject]?
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    var menuResponseInfo: [MenuResponseInfo]?
 
+    var mainMenuCount : Int = 0
     var menuDetailViewController = MenuDetailViewController()
-
-    enum selectState { case notSelect, selecting }
 
     
     @IBOutlet weak var mainMenuTableView: UITableView!
@@ -53,32 +51,32 @@ class MenuListViewController : UIViewController, UITableViewDelegate, UITableVie
     
     // MARK: - App Life Cycle
     
-    override func viewDidLoad() {
-    }
+
     
     override func viewWillAppear(_ animated: Bool) {
-        self.navigationItem.title = storeInfo.1
-        self.tabBarController?.tabBar.isHidden = true
-        selectConfigureUI(.notSelect)
         
-        let parameters : Parameters = [
-            "store_id" : storeInfo.0
-        ]
+        self.navigationItem.title = appDelegate.currentOrder.storeDic[Constants.Order.STORE_NAME]
+        
+        var parameters : Parameters = [:]
+        if let storeID = appDelegate.currentOrder.storeDic[Constants.Order.STORE_ID] {
+            parameters["store_id"] = storeID
+        }
+            
         
         Alamofire.request(MENUURL, parameters: parameters, encoding: URLEncoding.default).responseArray(completionHandler: {
-            (response: DataResponse<[MenuInfoObject]>) in
+            (response: DataResponse<[MenuResponseInfo]>) in
             self.menuDetailViewController = self.storyboard?.instantiateViewController(withIdentifier: "extraMenuView") as! MenuDetailViewController
-            
-            self.menuDetailViewController.storeInfo = self.storeInfo
+
             if let menuInfo = response.result.value {
-                self.menuInfoObject = menuInfo
+                self.menuResponseInfo = menuInfo
                 for menu in menuInfo {
+                    self.mainMenuCount = menu.mainCount
                     if menu.menuType == self.EXTRA_MENU_TYPE {
+                        // 추가메뉴리스트를 받아서 다음화면에 넘겨준다.
                         self.menuDetailViewController.extraMenuList.append((menu.menuId, menu.menuName, menu.price))
                     }
                 }
             }
-            self.mainMenuTableView.rowHeight = 120
             self.mainMenuTableView.reloadData()
         })
     }
@@ -91,38 +89,36 @@ class MenuListViewController : UIViewController, UITableViewDelegate, UITableVie
     // MARK: - Table view data source
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let menuFirstInfo = menuInfoObject  {
-            return menuFirstInfo[0].mainCount
-        }
-        return 0
+        return self.mainMenuCount
     }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "menuCell", for: indexPath) as! MenuCell
         
-        if let menuInfo = self.menuInfoObject {
+        if let menuInfo = self.menuResponseInfo {
             cell.menuListNameLabel.text = menuInfo[indexPath.row].menuName
             cell.menuListPriceLabel.text = String(menuInfo[indexPath.row].price)
             cell.menuListPeopleNumLabel.text = String(menuInfo[indexPath.row].requirePeopleNum)
             
+            cell.menuListImageView.circleImageView()
+            let imageURL = Constants.SERVER_URL+menuInfo[indexPath.row].imageURL
+            let url = URL(string: imageURL)!
+            Nuke.loadImage(with: url, into: cell.menuListImageView)
         }
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let menuInfo = self.menuInfoObject {
-            menuDetailViewController.mainMenuDic[Constants.Order.MAIN_MENU_ID] = String(menuInfo[indexPath.row].menuId)
-            menuDetailViewController.mainMenuDic[Constants.Order.MAIN_MANU_NAME] = menuInfo[indexPath.row].menuName
-            menuDetailViewController.mainMenuDic[Constants.Order.MAIN_MANU_PRICE] = String(menuInfo[indexPath.row].price)
-            menuDetailViewController.mainMenuDic[Constants.Order.MAIN_MANU_PEOPLE_NUM] = String(menuInfo[indexPath.row].requirePeopleNum)
+        if let menuInfo = self.menuResponseInfo {
+            appDelegate.currentOrder.mainMenuDic =
+                [Constants.Order.MAIN_MENU_ID:String(menuInfo[indexPath.row].menuId),
+                 Constants.Order.MAIN_MANU_NAME : menuInfo[indexPath.row].menuName,
+                 Constants.Order.MAIN_MANU_PRICE : String(menuInfo[indexPath.row].price),
+                 Constants.Order.MAIN_MANU_PEOPLE_NUM : String(menuInfo[indexPath.row].requirePeopleNum),
+                 Constants.Order.MAIN_MANU_IMAGE_URL : menuInfo[indexPath.row].imageURL]
+            appDelegate.currentOrder.requirePeopleNum = menuInfo[indexPath.row].requirePeopleNum
         }
-        
         self.navigationController?.pushViewController(menuDetailViewController, animated: true)
-    }
-    
-    // MARK: UI Functions
-    func selectConfigureUI(_ selectState: selectState) {
-        
     }
 }

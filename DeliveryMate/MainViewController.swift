@@ -12,23 +12,24 @@ import Alamofire
 import AlamofireObjectMapper
 import ObjectMapper
 
-class CategoriesInfoObject: Mappable {
+// CategoriesResponseInfo : 서버에서 받아온 매장 리스트 맵핑에 필요한 객체를 선언한다.
+class CategoriesResponseInfo: Mappable {
     var categoryId : Int?
-    var categoryName: String?
     
     required init?(map: Map) {}
     func mapping(map: Map) {
         categoryId <- map["id"]
-        categoryName <- map["name"]
     }
 }
 
 class MainViewController : UIViewController {
     let CATEGORIES_URL = Constants.SERVER_URL+"/categories"
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    var categoriesResponseInfo: [CategoriesResponseInfo?] = []
+
     var userDongCode : String?
     var userSimpleAddress : String?
     var tmpButton : UIButton?
-    var categoriesInfoObject: [CategoriesInfoObject?] = []
     
     @IBOutlet weak var addressLabel: UILabel!
 
@@ -36,27 +37,14 @@ class MainViewController : UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-
-        
-//        if UserDefaults.standard.string(forKey: Constants.User.USER_ADDRESS) != "" {
-//            userSimpleAddress = UserDefaults.standard.string(forKey: Constants.User.USER_ADDRESS)
-//        }
-//        
-//        if UserDefaults.standard.string(forKey: Constants.User.USER_DONG_CODE) != "" {
-//            userDongCode = UserDefaults.standard.string(forKey: Constants.User.USER_ADDRESS)
-//        }
-        
     }
+    
     
     override func viewWillAppear(_ animated: Bool) {
         self.tabBarController?.tabBar.isHidden = false
-
-        print("USER INFO SIMPLE ADDRESS \(UserDefaults.standard.string(forKey: Constants.User.USER_SIMPLE_ADDRESS))")
-        print("USER INFO DONG CODE \(UserDefaults.standard.string(forKey: Constants.User.USER_DONG_CODE))")
-        print("USER INFO ID \(UserDefaults.standard.string(forKey: Constants.User.USER_ID))")
-        print("Constants.User.USER_NAME \(UserDefaults.standard.string(forKey: Constants.User.USER_NAME))")
-        print("USER INFO ADDRESS \(UserDefaults.standard.string(forKey: Constants.User.USER_ADDRESS))")
+                
+        appDelegate.currentOrder.clear()
+        
         
         // 1. 사용자의 현재 지역명을 보여주고, UserDefault에 간단주소정보와 법정동코드를 저장한다.
         if let userSimpleAddress = self.userSimpleAddress, let userDongCode = self.userDongCode {
@@ -67,13 +55,9 @@ class MainViewController : UIViewController {
 
         // 2. 서버에 카테고리 정보를 요청한다.
         Alamofire.request(CATEGORIES_URL).responseArray(completionHandler: {
-            (response: DataResponse<[CategoriesInfoObject]>) in
+            (response: DataResponse<[CategoriesResponseInfo]>) in
             if let categoriesInfo = response.result.value {
-                self.categoriesInfoObject = categoriesInfo
-                for category in self.categoriesInfoObject {
-                    //self.tmpButton = self.view.viewWithTag((category?.categoryId)!) as? UIButton
-                    //self.tmpButton?.setTitle(category?.categoryName, for: .normal)
-                }
+                self.categoriesResponseInfo = categoriesInfo
             }
         })
     }

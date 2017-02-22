@@ -9,38 +9,28 @@
 import Foundation
 
 class OrderTitleCell : UITableViewCell {
-    @IBOutlet weak var orderTitleLabel : UILabel!
 }
 
-class OrderStoreCell : UITableViewCell {
-    @IBOutlet weak var orderStoreTitleLabel : UILabel!
+class StoreCell : UITableViewCell {
+    @IBOutlet weak var storeTitleLabel : UILabel!
 }
 
-class OrderMainMenuCell : UITableViewCell {
-    @IBOutlet weak var orderMainMenuNameLabel : UILabel!
-    @IBOutlet weak var orderMainMenuPriceLabel : UILabel!
+class MainMenuCell : UITableViewCell {
+    @IBOutlet weak var mainMenuNameLabel : UILabel!
+    @IBOutlet weak var mainMenuPriceLabel : UILabel!
 }
 
-class OrderExtraMenuCell : UITableViewCell {
-    @IBOutlet weak var orderExtraMenuNameLabel : UILabel!
-    @IBOutlet weak var orderExtraMenuPriceLabel : UILabel!
+class ListExtraMenuCell : UITableViewCell {
+    @IBOutlet weak var extraMenuNameLabel : UILabel!
+    @IBOutlet weak var extraMenuPriceLabel : UILabel!
     
-    @IBOutlet weak var orderExtraMenuCountLabel : UILabel!
+    @IBOutlet weak var extraMenuCountLabel : UILabel!
     
 }
 
-class OrderTotalPriceCell : UITableViewCell
+class TotalPriceCell : UITableViewCell
 {
-    @IBOutlet weak var orderTotalPriceLabel : UILabel!
-}
-
-class OrderLimitTimeCell : UITableViewCell{
-    @IBOutlet weak var orderLimitTimeLabel : UILabel!
-    
-}
-
-class OrderTimePickerCell : UITableViewCell {
-    @IBOutlet weak var orderTimePicker : UIPickerView!
+    @IBOutlet weak var totalPriceLabel : UILabel!
 }
 
 class OrderPeopleNumCell : UITableViewCell {

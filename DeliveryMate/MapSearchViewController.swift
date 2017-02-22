@@ -74,7 +74,7 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
     var userDongCode : String?
     lazy var mapView: MTMapView = MTMapView.init(frame: self.mapFrameView.frame)
     
-    enum mapSearchInState { case prepare, searching, searched }
+    enum mapSearchInState { case searching, searched }
     
     @IBOutlet weak var mapSearchBar: UISearchBar!
     @IBOutlet weak var navigationBar: UINavigationBar!
@@ -98,10 +98,6 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
         // 3. daum 지도를 뷰에 그린다.
         self.mapView.frame = self.mapFrameView.frame
         self.mapFrameView.addSubview(mapView)
-        
-        // 4. 상태바 뒤에 지도뷰가 투명하게 비치도록한다.
-        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
-        statusBar.backgroundColor = UIColor.init(white: 1, alpha: 0.7)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -110,8 +106,6 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
         self.tableOriginHeight = self.mapTableView.frame.height
         self.searchResultbuttonOriginY = self.searchResultButton.frame.minY
         
-        // 2. 기본적인 뷰의 UI를 설정한다.
-        self.mapSearchConfigureUI(.prepare)
     }
     
     // MARK: - searchBar

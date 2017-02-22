@@ -30,10 +30,10 @@ class ExtraMenuCell : UITableViewCell {
     @IBOutlet weak var extraMenuNameLabel : UILabel!
     @IBOutlet weak var extraMenuPriceLabel : UILabel!
     @IBOutlet weak var extraMenuCountLabel : UILabel!
-    @IBOutlet weak var checkImageView : UIImageView!
+    @IBOutlet weak var checkBoxImageView : UIImageView!
     @IBOutlet weak var plusButton : UIButton!
     @IBOutlet weak var minusButton : UIButton!
-
+    
     @IBAction func plusButtonPressed(_ sender: Any) {
         if let extraMenuCount = Int(extraMenuCountLabel.text!) {
             if extraMenuCount > 9 {
