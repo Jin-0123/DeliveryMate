@@ -206,7 +206,7 @@ class OrderViewController  : UIViewController, UITableViewDelegate, UITableViewD
     func goToMainView() {
         self.dismiss(animated: true, completion: {
             if let naviController = self.delegate?.navigationController {
-                naviController.popToRootViewController(animated: true)
+                naviController.popToRootViewController(animated: false)
             }
         })
     }

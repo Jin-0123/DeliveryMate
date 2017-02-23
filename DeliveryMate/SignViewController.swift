@@ -111,7 +111,7 @@ class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
                     }
                     
                     if self.callView == "modalView" {
-                        self.dismiss(animated: true, completion: {
+                        self.dismiss(animated: false, completion: {
                             UserDefaults.standard.synchronize()
                         })
                     }

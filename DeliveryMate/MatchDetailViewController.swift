@@ -198,7 +198,7 @@ class MatchDetailViewController : UIViewController, UITableViewDelegate, UITable
 
     @IBAction func closeButtonPressed(_ sender: Any) {
         // 닫기버튼을 누르면, 주문상태창, 주문서창을 닫고, 메인메뉴 화면으로 이동한다.
-        self.dismiss(animated: true, completion: {
+        self.dismiss(animated: false, completion: {
             if let orderController = self.orderViewDelegate {
                 orderController.goToMainView()
             }
