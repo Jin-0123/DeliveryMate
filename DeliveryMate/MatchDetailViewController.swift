@@ -83,8 +83,7 @@ class MatchDetailViewController : UIViewController, UITableViewDelegate, UITable
                 
                 if let matchDetailInfo = response.result.value {
                     self.orderInfo.currentPeopleNum = matchDetailInfo.currentPeopleNum
-                    //self.orderInfo.orderStatus = matchDetailInfo.status
-                    
+                    print(matchDetailInfo.currentPeopleNum)
                     
                     if matchDetailInfo.extraMenu.count != 0 {
                         self.orderInfo.extraMenuDic = [Int:(Int, Int, String)]()
@@ -164,8 +163,13 @@ class MatchDetailViewController : UIViewController, UITableViewDelegate, UITable
             cell.isUserInteractionEnabled = false
             if orderInfo.orderStatus == "waiting" {
                 if let curNum = orderInfo.currentPeopleNum, let reqNum = orderInfo.requirePeopleNum {
-                    cell.currentPeopleNumLabel.text = String(curNum)
-                    cell.requirePeopleNumLabel.text = String(reqNum)
+                    let currentPeopleNumString = NSMutableAttributedString(string: "현재 동일메뉴 등록인원은 \(curNum) 명 입니다.")
+                    currentPeopleNumString.addAttribute(NSForegroundColorAttributeName, value: UIColor(red:0.91, green:0.53, blue:0.62, alpha:1.0), range: NSMakeRange(14, 1))
+                    cell.currentPeopleNumLabel.attributedText = currentPeopleNumString
+                    
+                    let requirePeopleNumString = NSMutableAttributedString(string: "동일메뉴 주문인원이 \(reqNum) 명일 경우, 매칭이 완료됩니다.")
+                    requirePeopleNumString.addAttribute(NSForegroundColorAttributeName, value: UIColor(red:0.91, green:0.53, blue:0.62, alpha:1.0), range: NSMakeRange(11, 1))
+                    cell.requirePeopleNumLabel.attributedText = requirePeopleNumString
                 }
                 tableView.rowHeight = 50
             } else {

@@ -92,7 +92,15 @@ class OrderViewController  : UIViewController, UITableViewDelegate, UITableViewD
         else if indexPath.row == (extraDicCount + 4) {
             let cell = tableView.dequeueReusableCell(withIdentifier: "orderPeopleNumCell", for: indexPath) as! OrderPeopleNumCell
             cell.isUserInteractionEnabled = false
-            cell.orderPeopleNumLabel.text = appDelegate.currentOrder.mainMenuDic[Constants.Order.MAIN_MANU_PEOPLE_NUM]!
+            
+            
+           
+            
+            let peopleNumString = NSMutableAttributedString(string: "동일메뉴 주문인원이 \(appDelegate.currentOrder.mainMenuDic[Constants.Order.MAIN_MANU_PEOPLE_NUM]!) 명일 경우 거래가 성사됩니다.")
+            
+            peopleNumString.addAttribute(NSForegroundColorAttributeName, value: UIColor(red:0.91, green:0.53, blue:0.62, alpha:1.0), range: NSMakeRange(11, 1))
+            
+            cell.orderPeopleNumLabel.attributedText = peopleNumString
             tableView.rowHeight = 40
             return cell
         }
@@ -149,10 +157,13 @@ class OrderViewController  : UIViewController, UITableViewDelegate, UITableViewD
             print("\(hour), \(minutes)")
             print(parameters)
             
+            let indicator = IndicatorHelper.init(view: self.view)
+            indicator.start()
             Alamofire.request(self.ORDER_URL, method: .post, parameters: parameters, encoding: JSONEncoding.default).responseObject(completionHandler: {
                 (response: DataResponse<OrderResponseInfoObject>) in
                 dump(response)
                 if let orderResponseInfoObject = response.result.value {
+                    indicator.stop()
                     self.appDelegate.currentOrder.orderStatus = orderResponseInfoObject.status
                     self.appDelegate.currentOrder.currentPeopleNum = orderResponseInfoObject.currentPeopleNum
                     

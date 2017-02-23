@@ -75,6 +75,9 @@ class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
         let credential = FIRGoogleAuthProvider.credential(withIDToken: authentication.idToken,
                                                           accessToken: authentication.accessToken)
         
+        let indicator = IndicatorHelper.init(view: self.view)
+        indicator.start()
+        
         FIRAuth.auth()?.signIn(with: credential) { (user, error) in
             if let error = error {
                 print(error)
@@ -99,6 +102,7 @@ class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
                 }
                 
                 
+                
                 Alamofire.request(self.USER_URL, method: .post, parameters: parameters, encoding: JSONEncoding.default).responseObject(completionHandler: {
                     (response: DataResponse<UserInfoObject>) in
 
@@ -111,6 +115,7 @@ class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
                             UserDefaults.standard.synchronize()
                         })
                     }
+                    indicator.stop()
                 })
             }
         
@@ -145,6 +150,9 @@ class SignViewController : UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
         }
     }
     
+    @IBAction func closeButtonPressed(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
     
     // MARK: UI Functions
     func signConfigureUI(_ signState: signInState) {
