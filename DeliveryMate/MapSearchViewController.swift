@@ -156,7 +156,7 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
                 
                 
             })
-            searchBar.resignFirstResponder()
+
         }
     }
     
