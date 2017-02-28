@@ -86,6 +86,8 @@ class MapSearchViewController : UIViewController, MTMapViewDelegate, UISearchBar
     // MARK: - App Life Cycle
     
     override func viewDidLoad() {
+        super.viewDidLoad()
+
         
         // 1. searchBar 델리게이트를 지정한다.
         mapSearchBar.delegate = self

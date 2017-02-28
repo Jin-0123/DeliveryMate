@@ -58,6 +58,10 @@ class MatchDetailViewController : UIViewController, UITableViewDelegate, UITable
     
     @IBOutlet weak var matchDetailTableView : UITableView!
     @IBOutlet weak var closeButton : UIButton!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
 
     override func viewWillAppear(_ animated: Bool) {
 

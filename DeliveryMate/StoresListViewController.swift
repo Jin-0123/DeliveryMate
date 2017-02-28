@@ -40,6 +40,8 @@ class StoresListViewController : UIViewController, UITableViewDelegate, UITableV
     // MARK: - App Life Cycle
 
     override func viewDidLoad() {
+        super.viewDidLoad()
+
         // 1. 네비게이션 타이틀을 설정한다.
         self.navigationItem.title = NAVIGATION_TITLE
     }

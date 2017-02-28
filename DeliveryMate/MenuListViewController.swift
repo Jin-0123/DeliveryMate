@@ -50,7 +50,9 @@ class MenuListViewController : UIViewController, UITableViewDelegate, UITableVie
     
     
     // MARK: - App Life Cycle
-    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
 
     
     override func viewWillAppear(_ animated: Bool) {

@@ -50,6 +50,10 @@ class MatchListViewController : UIViewController, UITableViewDelegate, UITableVi
     var orderInfos = [OrderInfo]()
 
     @IBOutlet weak var matchListTableView : UITableView!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         if UserDefaults.standard.string(forKey: Constants.User.USER_ID) == nil {

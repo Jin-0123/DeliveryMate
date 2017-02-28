@@ -42,6 +42,9 @@ class OrderViewController  : UIViewController, UITableViewDelegate, UITableViewD
 
     
     // MARK: - App life cycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         if let extraMenuDic = appDelegate.currentOrder.extraMenuDic {

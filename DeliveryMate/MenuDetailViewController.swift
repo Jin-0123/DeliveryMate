@@ -32,6 +32,9 @@ class MenuDetailViewController : UIViewController, UITableViewDelegate, UITableV
     
     
     // MARK: - App Life Cycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
 
     override func viewWillAppear(_ animated: Bool) {
 
